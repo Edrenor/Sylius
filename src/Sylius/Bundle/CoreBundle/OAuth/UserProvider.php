@@ -163,6 +163,7 @@ class UserProvider extends BaseUserProvider implements AccountConnectorInterface
         /** @var SyliusUserInterface $user */
         Assert::isInstanceOf($user, SyliusUserInterface::class);
 
+        
         /** @var UserOAuthInterface $oauth */
         $oauth = $this->oauthFactory->createNew();
         $oauth->setIdentifier((string)$response->getUsername());

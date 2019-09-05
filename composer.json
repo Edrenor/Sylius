@@ -18,6 +18,7 @@
             "homepage": "http://github.com/Sylius/Sylius/contributors"
         }
     ],
+    //hello
     "require": {
         "php": "^7.2",
         "ext-exif": "*",

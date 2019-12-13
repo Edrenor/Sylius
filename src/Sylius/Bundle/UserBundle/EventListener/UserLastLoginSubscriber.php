@@ -66,8 +66,8 @@ final class UserLastLoginSubscriber implements EventSubscriberInterface
             throw new \UnexpectedValueException('In order to use this subscriber, your class has to implement UserInterface');
         }
 
-        $user->setLastLogin(new \DateTime());
-        $this->userManager->persist($user);
-        $this->userManager->flush();
+//        $user->setLastLogin(new \DateTime());
+//        $this->userManager->persist($user);
+//        $this->userManager->flush();
     }
 }

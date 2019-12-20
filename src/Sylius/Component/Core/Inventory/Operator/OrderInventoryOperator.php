@@ -60,26 +60,27 @@ final class OrderInventoryOperator implements OrderInventoryOperatorInterface
      */
     public function sell(OrderInterface $order): void
     {
-        /** @var OrderItemInterface $orderItem */
-        foreach ($order->getItems() as $orderItem) {
-            $variant = $orderItem->getVariant();
-
-            if (!$variant->isTracked()) {
-                continue;
-            }
-
-            Assert::greaterThanEq(
-                ($variant->getOnHold() - $orderItem->getQuantity()),
-                0,
-                sprintf(
-                    'Not enough units to decrease on hold quantity from the inventory of a variant "%s".',
-                    $variant->getName()
-                )
-            );
-            /*
+        /*
                 отвечает за ошибку при выстевлении статуса "оплачено" в администативной панели в заказе
                 было отключено по просьбе заказчика так как он не мог подтвердить оплату товара, который закончился на складе
             */
+//        /** @var OrderItemInterface $orderItem */
+//        foreach ($order->getItems() as $orderItem) {
+//            $variant = $orderItem->getVariant();
+//
+//            if (!$variant->isTracked()) {
+//                continue;
+//            }
+//
+//            Assert::greaterThanEq(
+//                ($variant->getOnHold() - $orderItem->getQuantity()),
+//                0,
+//                sprintf(
+//                    'Not enough units to decrease on hold quantity from the inventory of a variant "%s".',
+//                    $variant->getName()
+//                )
+//            );
+//
 //            Assert::greaterThanEq(
 //                ($variant->getOnHand() - $orderItem->getQuantity()),
 //                0,
@@ -88,10 +89,10 @@ final class OrderInventoryOperator implements OrderInventoryOperatorInterface
 //                    $variant->getName()
 //                )
 //            );
-
-            $variant->setOnHold($variant->getOnHold() - $orderItem->getQuantity());
-            $variant->setOnHand($variant->getOnHand() - $orderItem->getQuantity());
-        }
+//
+//            $variant->setOnHold($variant->getOnHold() - $orderItem->getQuantity());
+//            $variant->setOnHand($variant->getOnHand() - $orderItem->getQuantity());
+//        }
     }
 
     /**

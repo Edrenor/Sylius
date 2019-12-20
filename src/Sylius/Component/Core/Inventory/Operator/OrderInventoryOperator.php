@@ -71,20 +71,17 @@ final class OrderInventoryOperator implements OrderInventoryOperatorInterface
             if (!$variant->isTracked()) {
                 continue;
             }
-            $onHold = $variant->getOnHold() - $orderItem->getQuantity();
 
+            $onHold = $variant->getOnHold() - $orderItem->getQuantity();
+            $variant->setOnHold($onHold);
             if($onHold < 0) {
                 $variant->setOnHold(0);
-            } else{
-                $variant->setOnHold($onHold);
             }
 
             $onHand = $variant->getOnHand() - $orderItem->getQuantity();
-
+            $variant->setOnHand($onHand);
             if($onHand < 0) {
                 $variant->setOnHand(0);
-            } else{
-                $variant->setOnHand($onHand);
             }
 //            Assert::greaterThanEq(
 //                ($variant->getOnHold() - $orderItem->getQuantity()),

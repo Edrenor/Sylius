@@ -76,15 +76,18 @@ final class OrderInventoryOperator implements OrderInventoryOperatorInterface
                     $variant->getName()
                 )
             );
-
-            Assert::greaterThanEq(
-                ($variant->getOnHand() - $orderItem->getQuantity()),
-                0,
-                sprintf(
-                    'Not enough units to decrease on hand quantity from the inventory of a variant "%s".',
-                    $variant->getName()
-                )
-            );
+            /*
+                отвечает за ошибку при выстевлении статуса "оплачено" в администативной панели в заказе
+                было отключено по просьбе заказчика так как он не мог подтвердить оплату товара, который закончился на складе
+            */
+//            Assert::greaterThanEq(
+//                ($variant->getOnHand() - $orderItem->getQuantity()),
+//                0,
+//                sprintf(
+//                    'Not enough units to decrease on hand quantity from the inventory of a variant "%s".',
+//                    $variant->getName()
+//                )
+//            );
 
             $variant->setOnHold($variant->getOnHold() - $orderItem->getQuantity());
             $variant->setOnHand($variant->getOnHand() - $orderItem->getQuantity());

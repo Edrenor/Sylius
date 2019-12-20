@@ -64,14 +64,28 @@ final class OrderInventoryOperator implements OrderInventoryOperatorInterface
                 отвечает за ошибку при выстевлении статуса "оплачено" в администативной панели в заказе
                 было отключено по просьбе заказчика так как он не мог подтвердить оплату товара, который закончился на складе
             */
-//        /** @var OrderItemInterface $orderItem */
-//        foreach ($order->getItems() as $orderItem) {
-//            $variant = $orderItem->getVariant();
-//
-//            if (!$variant->isTracked()) {
-//                continue;
-//            }
-//
+        /** @var OrderItemInterface $orderItem */
+        foreach ($order->getItems() as $orderItem) {
+            $variant = $orderItem->getVariant();
+
+            if (!$variant->isTracked()) {
+                continue;
+            }
+            $onHold = $variant->getOnHold() - $orderItem->getQuantity();
+
+            if($onHold < 0) {
+                $variant->setOnHold(0);
+            } else{
+                $variant->setOnHold($onHold);
+            }
+
+            $onHand = $variant->getOnHand() - $orderItem->getQuantity();
+
+            if($onHand < 0) {
+                $variant->setOnHand(0);
+            } else{
+                $variant->setOnHand($onHand);
+            }
 //            Assert::greaterThanEq(
 //                ($variant->getOnHold() - $orderItem->getQuantity()),
 //                0,
@@ -89,10 +103,10 @@ final class OrderInventoryOperator implements OrderInventoryOperatorInterface
 //                    $variant->getName()
 //                )
 //            );
-//
+
 //            $variant->setOnHold($variant->getOnHold() - $orderItem->getQuantity());
 //            $variant->setOnHand($variant->getOnHand() - $orderItem->getQuantity());
-//        }
+        }
     }
 
     /**

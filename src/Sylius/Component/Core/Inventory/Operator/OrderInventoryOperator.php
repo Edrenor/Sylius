@@ -119,16 +119,25 @@ final class OrderInventoryOperator implements OrderInventoryOperatorInterface
                 continue;
             }
 
-            Assert::greaterThanEq(
-                ($variant->getOnHold() - $orderItem->getQuantity()),
-                0,
-                sprintf(
-                    'Not enough units to decrease on hold quantity from the inventory of a variant "%s".',
-                    $variant->getName()
-                )
-            );
 
-            $variant->setOnHold($variant->getOnHold() - $orderItem->getQuantity());
+            /*
+                отвечает за ошибку при отмене заказа у которого отсутствуют на складе orderitem
+            */
+//            Assert::greaterThanEq(
+//                ($variant->getOnHold() - $orderItem->getQuantity()),
+//                0,
+//                sprintf(
+//                    'Not enough units to decrease on hold quantity from the inventory of a variant "%s".',
+//                    $variant->getName()
+//                )
+//            );
+
+            $onHold = $variant->getOnHold() - $orderItem->getQuantity();
+            $variant->setOnHold($onHold);
+            if($onHold < 0) {
+                $variant->setOnHold(0);
+            }
+//            $variant->setOnHold($variant->getOnHold() - $orderItem->getQuantity());
         }
     }
 

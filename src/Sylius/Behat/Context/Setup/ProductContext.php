@@ -173,6 +173,15 @@ final class ProductContext implements Context
     }
 
     /**
+     * @Given /^(this product) is(?:| also) unavailable in ("[^"]+" channel)$/
+     */
+    public function thisProductIsAlsoUnavailableInChannel(ProductInterface $product, ChannelInterface $channel): void
+    {
+        $product->removeChannel($channel);
+        $this->objectManager->flush();
+    }
+
+    /**
      * @Given the store( also) has a product :productName with code :code
      * @Given the store( also) has a product :productName with code :code, created at :date
      */
@@ -867,6 +876,17 @@ final class ProductContext implements Context
 
         $priceValue = $this->getPriceFromString($price);
         $this->createProductVariant($product, $productVariantName, $priceValue, $code, $channel, null, true, $currentStock);
+    }
+
+    /**
+     * @Given the store has a product :productName in channel :channel
+     * @Given the store also has a product :productName in channel :channel
+     */
+    public function theStoreHasAProductWithChannel(string $productName, ChannelInterface $channel): void
+    {
+        $product = $this->createProduct($productName, 0, $channel);
+
+        $this->saveProduct($product);
     }
 
     private function getPriceFromString(string $price): int

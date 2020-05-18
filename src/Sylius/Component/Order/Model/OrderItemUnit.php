@@ -24,7 +24,11 @@ class OrderItemUnit implements OrderItemUnitInterface
     /** @var OrderItemInterface */
     protected $orderItem;
 
-    /** @var Collection|AdjustmentInterface[] */
+    /**
+     * @var Collection|AdjustmentInterface[]
+     *
+     * @psalm-var Collection<array-key, AdjustmentInterface>
+     */
     protected $adjustments;
 
     /** @var int */
@@ -32,10 +36,11 @@ class OrderItemUnit implements OrderItemUnitInterface
 
     public function __construct(OrderItemInterface $orderItem)
     {
+        /** @var ArrayCollection<array-key, AdjustmentInterface> $this->adjustments */
+        $this->adjustments = new ArrayCollection();
+
         $this->orderItem = $orderItem;
         $this->orderItem->addUnit($this);
-
-        $this->adjustments = new ArrayCollection();
     }
 
     /**

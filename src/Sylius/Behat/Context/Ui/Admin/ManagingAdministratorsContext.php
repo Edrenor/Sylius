@@ -22,7 +22,6 @@ use Sylius\Behat\Page\Admin\Crud\IndexPageInterface;
 use Sylius\Behat\Service\NotificationCheckerInterface;
 use Sylius\Behat\Service\SharedStorageInterface;
 use Sylius\Component\Core\Model\AdminUserInterface;
-use Sylius\Component\Core\Model\AvatarImage;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Webmozart\Assert\Assert;
 
@@ -290,16 +289,6 @@ final class ManagingAdministratorsContext implements Context
     public function iShouldBeNotifiedThatEmailIsNotValid()
     {
         Assert::same($this->createPage->getValidationMessage('email'), 'This email is invalid.');
-    }
-
-    /**
-     * @Then this administrator should not be added
-     */
-    public function thisAdministratorShouldNotBeAdded()
-    {
-        $this->indexPage->open();
-
-        Assert::same($this->indexPage->countItems(), 1);
     }
 
     /**

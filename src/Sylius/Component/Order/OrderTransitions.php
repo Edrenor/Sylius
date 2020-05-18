@@ -13,15 +13,13 @@ declare(strict_types=1);
 
 namespace Sylius\Component\Order;
 
-final class OrderTransitions
+interface OrderTransitions
 {
     public const GRAPH = 'sylius_order';
 
     public const TRANSITION_CREATE = 'create';
-    public const TRANSITION_CANCEL = 'cancel';
-    public const TRANSITION_FULFILL = 'fulfill';
 
-    private function __construct()
-    {
-    }
+    public const TRANSITION_CANCEL = 'cancel';
+
+    public const TRANSITION_FULFILL = 'fulfill';
 }

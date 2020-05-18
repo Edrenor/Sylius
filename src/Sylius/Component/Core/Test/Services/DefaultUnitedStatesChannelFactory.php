@@ -26,10 +26,15 @@ use Sylius\Component\Resource\Repository\RepositoryInterface;
 final class DefaultUnitedStatesChannelFactory implements DefaultChannelFactoryInterface
 {
     public const DEFAULT_CHANNEL_CODE = 'WEB-US';
+
     public const DEFAULT_COUNTRY_CODE = 'US';
+
     public const DEFAULT_ZONE_CODE = 'US';
+
     public const DEFAULT_CURRENCY_CODE = 'USD';
+
     public const DEFAULT_ZONE_NAME = 'United States';
+
     public const DEFAULT_CHANNEL_NAME = 'United States';
 
     /** @var RepositoryInterface */
@@ -105,6 +110,7 @@ final class DefaultUnitedStatesChannelFactory implements DefaultChannelFactoryIn
         $channel->addLocale($locale);
         $channel->setDefaultLocale($locale);
         $channel->setTaxCalculationStrategy('order_items_based');
+        $channel->setHostname('us.store.com');
 
         $defaultData = [
             'channel' => $channel,
@@ -143,7 +149,7 @@ final class DefaultUnitedStatesChannelFactory implements DefaultChannelFactoryIn
     {
         $currencyCode = $currencyCode ?? self::DEFAULT_CURRENCY_CODE;
 
-        /** @var CurrencyInterface $currency */
+        /** @var CurrencyInterface|null $currency */
         $currency = $this->currencyRepository->findOneBy(['code' => $currencyCode]);
 
         if (null === $currency) {
@@ -159,7 +165,7 @@ final class DefaultUnitedStatesChannelFactory implements DefaultChannelFactoryIn
 
     private function provideLocale(): LocaleInterface
     {
-        /** @var LocaleInterface $locale */
+        /** @var LocaleInterface|null $locale */
         $locale = $this->localeRepository->findOneBy(['code' => $this->defaultLocaleCode]);
 
         if (null === $locale) {

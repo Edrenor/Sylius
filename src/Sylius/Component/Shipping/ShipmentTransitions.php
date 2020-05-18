@@ -13,15 +13,13 @@ declare(strict_types=1);
 
 namespace Sylius\Component\Shipping;
 
-final class ShipmentTransitions
+interface ShipmentTransitions
 {
     public const GRAPH = 'sylius_shipment';
 
     public const TRANSITION_CREATE = 'create';
-    public const TRANSITION_SHIP = 'ship';
-    public const TRANSITION_CANCEL = 'cancel';
 
-    private function __construct()
-    {
-    }
+    public const TRANSITION_SHIP = 'ship';
+
+    public const TRANSITION_CANCEL = 'cancel';
 }

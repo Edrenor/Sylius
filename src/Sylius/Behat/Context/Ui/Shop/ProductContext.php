@@ -19,7 +19,6 @@ use Sylius\Behat\Page\ErrorPageInterface;
 use Sylius\Behat\Page\Shop\Product\IndexPageInterface;
 use Sylius\Behat\Page\Shop\Product\ShowPageInterface;
 use Sylius\Behat\Page\Shop\ProductReview\IndexPageInterface as ProductReviewIndexPageInterface;
-use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\ProductInterface;
 use Sylius\Component\Core\Model\TaxonInterface;
 use Webmozart\Assert\Assert;
@@ -299,6 +298,15 @@ final class ProductContext implements Context
     public function iShouldSeeTheProductPrice($price)
     {
         Assert::same($this->showPage->getPrice(), $price);
+    }
+
+    /**
+     * @Then the product original price should be :price
+     * @Then I should see the product original price :price
+     */
+    public function iShouldSeeTheProductOriginalPrice($price)
+    {
+        Assert::same($this->showPage->getOriginalPrice(), $price);
     }
 
     /**

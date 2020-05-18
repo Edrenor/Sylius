@@ -36,6 +36,7 @@ final class OrderPricesRecalculator implements OrderProcessorInterface
     {
         /** @var OrderInterface $order */
         Assert::isInstanceOf($order, OrderInterface::class);
+
         $channel = $order->getChannel();
 
         foreach ($order->getItems() as $item) {

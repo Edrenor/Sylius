@@ -1,6 +1,6 @@
 <h1 align="center">
-    <a href="https://sylius.com" target="_blank">
-        <img src="https://demo.sylius.com/assets/shop/img/logo.png" />
+    <a href="https://sylius.com/github-readme/link/" target="_blank">
+        <img src="https://sylius.com/assets/github-readme.png" />
     </a>
 </h1>
 
@@ -74,7 +74,7 @@ Sylius Plus gives you all the power of Open Source and much more. It comes with 
 - Returns Management
 - Multi-source Inventory
 - Advanced Users Permissions
-- Enhanced security & monitoring
+- Partial Shipment
 
 What is more, Sylius Plus means SLA-backed support and Project Success Assistance from its creators. [Learn more.](https://sylius.com/plus/)
 

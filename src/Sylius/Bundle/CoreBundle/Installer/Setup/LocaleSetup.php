@@ -20,7 +20,8 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Intl\Intl;
+use Symfony\Component\Intl\Exception\MissingResourceException;
+use Symfony\Component\Intl\Languages;
 
 final class LocaleSetup implements LocaleSetupInterface
 {
@@ -53,7 +54,7 @@ final class LocaleSetup implements LocaleSetupInterface
             $output->writeln('<info>You may also need to add this locale into config/services.yaml configuration.</info>');
         }
 
-        /** @var LocaleInterface $existingLocale */
+        /** @var LocaleInterface|null $existingLocale */
         $existingLocale = $this->localeRepository->findOneBy(['code' => $code]);
         if (null !== $existingLocale) {
             return $existingLocale;
@@ -103,6 +104,10 @@ final class LocaleSetup implements LocaleSetupInterface
             [$language, $region] = explode('_', $code, 2);
         }
 
-        return Intl::getLanguageBundle()->getLanguageName($language, $region);
+        try {
+            return Languages::getName($language, $region);
+        } catch(MissingResourceException $exception) {
+            return null;
+        }
     }
 }

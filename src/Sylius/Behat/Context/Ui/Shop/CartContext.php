@@ -159,6 +159,16 @@ final class CartContext implements Context
     }
 
     /**
+     * @Then I should not see shipping total for my cart
+     */
+    public function iShouldNotSeeShippingTotalForMyCart(): void
+    {
+        $this->summaryPage->open();
+
+        Assert::false($this->summaryPage->hasShippingTotal());
+    }
+
+    /**
      * @Then my discount should be :promotionsTotal
      */
     public function myDiscountShouldBe($promotionsTotal)
@@ -431,7 +441,7 @@ final class CartContext implements Context
     }
 
     /**
-     * @Then /^(\d)(st|nd|rd|th) item in my cart should have "([^"]+)" image displayed$/
+     * @Then /^(\d)(?:st|nd|rd|th) item in my cart should have "([^"]+)" image displayed$/
      */
     public function itemShouldHaveImageDisplayed(int $itemNumber, string $image): void
     {

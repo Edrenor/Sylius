@@ -20,10 +20,10 @@
         }
     ],
     "require": {
-        "php": "^7.2",
+        "php": "^7.3",
 
         "doctrine/orm": "^2.5",
-        "sylius/registry": "^1.2",
+        "sylius/registry": "^1.4",
         "sylius/resource": "^1.0"
     },
     "require-dev": {

@@ -103,7 +103,7 @@ final class ManagingProductsContext implements Context
     }
 
     /**
-     * @Given I want to create a new simple product
+     * @When I want to create a new simple product
      */
     public function iWantToCreateANewSimpleProduct()
     {
@@ -111,9 +111,9 @@ final class ManagingProductsContext implements Context
     }
 
     /**
-     * @Given I want to create a new configurable product
+     * @When I want to create a new configurable product
      */
-    public function iWantToCreateANewConfigurableProduct()
+    public function iWantToCreateANewConfigurableProduct(): void
     {
         $this->createConfigurableProductPage->open();
     }
@@ -130,14 +130,17 @@ final class ManagingProductsContext implements Context
     }
 
     /**
+     * @When I do not name it
      * @When I name it :name in :language
      * @When I rename it to :name in :language
      */
-    public function iRenameItToIn($name, $language)
+    public function iRenameItToIn(?string $name = null, ?string $language = null): void
     {
-        $currentPage = $this->resolveCurrentPage();
+        if ($name !== null && $language !== null) {
+            $currentPage = $this->resolveCurrentPage();
 
-        $currentPage->nameItIn($name, $language);
+            $currentPage->nameItIn($name, $language);
+        }
     }
 
     /**
@@ -246,6 +249,22 @@ final class ManagingProductsContext implements Context
     }
 
     /**
+     * @When I choose :channelName as a channel filter
+     */
+    public function iChooseChannelAsAChannelFilter(string $channelName): void
+    {
+        $this->indexPage->chooseChannelFilter($channelName);
+    }
+
+    /**
+     * @When I filter
+     */
+    public function iFilter(): void
+    {
+        $this->indexPage->filter();
+    }
+
+    /**
      * @Then I should see the product :productName in the list
      * @Then the product :productName should appear in the store
      * @Then the product :productName should be in the shop
@@ -337,11 +356,12 @@ final class ManagingProductsContext implements Context
     }
 
     /**
-     * @When I switch the way products are sorted by :field
+     * @When I switch the way products are sorted :sortType by :field
      * @When I start sorting products by :field
-     * @Given the products are already sorted by :field
+     * @When the products are already sorted :sortType by :field
+     * @When I sort the products :sortType by :field
      */
-    public function iSortProductsBy($field)
+    public function iSortProductsBy(string $field): void
     {
         $this->indexPage->sortBy($field);
     }
@@ -415,9 +435,9 @@ final class ManagingProductsContext implements Context
     }
 
     /**
-     * @Then the code field should be disabled
+     * @Then I should not be able to edit its code
      */
-    public function theCodeFieldShouldBeDisabled()
+    public function iShouldNotBeAbleToEditItsCode(): void
     {
         $currentPage = $this->resolveCurrentPage();
 
@@ -550,7 +570,7 @@ final class ManagingProductsContext implements Context
     }
 
     /**
-     * @Given product with :element :value should not be added
+     * @Then product with :element :value should not be added
      */
     public function productWithNameShouldNotBeAdded($element, $value)
     {

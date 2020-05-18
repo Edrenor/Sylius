@@ -193,11 +193,35 @@ final class ManagingOrdersContext implements Context
     }
 
     /**
+     * @When I resend the order confirmation email
+     */
+    public function iResendTheOrderConfirmationEmail(): void
+    {
+        $this->showPage->resendOrderConfirmationEmail();
+    }
+
+    /**
+     * @When I resend the shipment confirmation email
+     */
+    public function iResendTheShipmentConfirmationEmail(): void
+    {
+        $this->showPage->resendShipmentConfirmationEmail();
+    }
+
+    /**
      * @Then I should see a single order from customer :customer
      */
     public function iShouldSeeASingleOrderFromCustomer(CustomerInterface $customer)
     {
         Assert::true($this->indexPage->isSingleResourceOnPage(['customer' => $customer->getEmail()]));
+    }
+
+    /**
+     * @Then I should see a single order in the list
+     */
+    public function iShouldSeeASingleOrderInTheList(): void
+    {
+        Assert::same($this->indexPage->countItems(), 1);
     }
 
     /**
@@ -274,7 +298,6 @@ final class ManagingOrdersContext implements Context
     /**
      * @Then /^it should have (\d+) items$/
      * @Then I should see :amount orders in the list
-     * @Then I should see a single order in the list
      */
     public function itShouldHaveAmountOfItems($amount = 1)
     {
@@ -346,11 +369,11 @@ final class ManagingOrdersContext implements Context
     }
 
     /**
-     * @Then the order's promotion discount should be :promotionDiscount
+     * @Then the order's promotion discount should be :promotionAmount from :promotionName promotion
      */
-    public function theOrdersPromotionDiscountShouldBe($promotionDiscount)
+    public function theOrdersPromotionDiscountShouldBeFromPromotion(string $promotionAmount, string $promotionName): void
     {
-        Assert::true($this->showPage->hasPromotionDiscount($promotionDiscount));
+        Assert::true($this->showPage->hasPromotionDiscount($promotionName, $promotionAmount));
     }
 
     /**
@@ -817,17 +840,9 @@ final class ManagingOrdersContext implements Context
     }
 
     /**
-     * @Then I should not see information about payments
-     */
-    public function iShouldNotSeeInformationAboutPayments()
-    {
-        Assert::same($this->showPage->getPaymentsCount(), 0);
-    }
-
-    /**
      * @Then I should not see information about shipments
      */
-    public function iShouldNotSeeInformationAboutShipments()
+    public function iShouldNotSeeInformationAboutShipments(): void
     {
         Assert::same($this->showPage->getShipmentsCount(), 0);
     }
@@ -878,6 +893,34 @@ final class ManagingOrdersContext implements Context
     public function productDiscountedUnitPriceShouldBe(string $productName, string $price): void
     {
         Assert::same($this->showPage->getItemDiscountedUnitPrice($productName), $price);
+    }
+
+    /**
+     * @Then I should be informed that there are no payments
+     */
+    public function iShouldSeeInformationAboutNoPayments(): void
+    {
+        Assert::same($this->showPage->getPaymentsCount(), 0);
+        Assert::true($this->showPage->hasInformationAboutNoPayment());
+    }
+
+    /**
+     * @Then /^I should be notified that the (order|shipment) confirmation email has been successfully resent to the customer$/
+     */
+    public function iShouldBeNotifiedThatTheOrderConfirmationEmailHasBeenSuccessfullyResentToTheCustomer(string $type): void
+    {
+        $this->notificationChecker->checkNotification(
+            sprintf('%s confirmation has been successfully resent to the customer.', ucfirst($type)),
+            NotificationType::success()
+        );
+    }
+
+    /**
+     * @Then I should see the shipping date as :dateTime
+     */
+    public function iShouldSeeTheShippingDateAs(string $dateTime): void
+    {
+        Assert::same($this->showPage->getShippedAtDate(), $dateTime);
     }
 
     /**

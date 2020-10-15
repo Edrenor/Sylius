@@ -41,6 +41,9 @@ final class UserCartRecalculationListener
      */
     public function recalculateCartWhileLogin(Event $event): void
     {
+        if ($event->getRequest()->get('_recalculate_cart', null) !== true) {
+            return;
+        }
         try {
             $cart = $this->cartContext->getCart();
         } catch (CartNotFoundException $exception) {

@@ -6,14 +6,14 @@
     {% import _self as tree %}
 
     <ul>
-        {% for taxon in taxons if taxon.id != null %}
+        {% for taxon in taxons|filter(taxon => taxon.id is not null) %}
             <li data-id="{{ taxon.id }}" {% if taxon.children is not empty %}data-sylius-js-tree-parent="{{ taxon.id }}"{% endif %}>
                 <div class="sylius-tree__item">
                     <div class="sylius-tree__icon" {% if taxon.children is not empty %}data-sylius-js-tree-trigger="{{ taxon.id }}"{% endif %}>
                         <i class="{{ taxon.children is not empty ? 'caret down' : 'angle left' }} icon"></i>
                     </div>
                     <div class="sylius-tree__title">
-                        <a href="{{ path('sylius_admin_product_per_taxon_index', {'taxonId': taxon.id}) }}">
+                        <a href="{{ path('sylius_admin_product_per_taxon_index', {'taxonId': taxon.id}) }}"{% if not taxon.enabled %} class="text gray"{% endif %}>
                             {{ taxon.name }}
                         </a>
                     </div>

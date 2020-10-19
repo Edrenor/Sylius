@@ -18,20 +18,14 @@ class InventoryUnit implements InventoryUnitInterface
     /** @var mixed */
     protected $id;
 
-    /** @var StockableInterface */
+    /** @var StockableInterface|null */
     protected $stockable;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getId()
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getStockable(): ?StockableInterface
     {
         return $this->stockable;

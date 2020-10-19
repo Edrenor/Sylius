@@ -22,9 +22,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class MoneyType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -39,24 +36,18 @@ final class MoneyType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * @psalm-suppress MissingPropertyType
      */
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['currency'] = $options['currency'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParent(): string
     {
         return \Symfony\Component\Form\Extension\Core\Type\MoneyType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
@@ -66,9 +57,6 @@ final class MoneyType extends AbstractType
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'sylius_money';

@@ -17,7 +17,7 @@ Quickstart to plugins development:
 
 .. code-block:: bash
 
-    $ composer create-project sylius/plugin-skeleton SyliusMyFirstPlugin
+    composer create-project sylius/plugin-skeleton SyliusMyFirstPlugin
 
 .. note::
 
@@ -68,6 +68,8 @@ to ensure your plugin's extraordinary quality.
 .. _`Behat`: http://behat.org/en/latest/
 .. _`phpspec`: http://www.phpspec.net/en/stable/
 .. _`PHPUnit`: https://phpunit.de/
+
+.. _book_plugins_creating_plugin_naming_conventions:
 
 5. Naming conventions
 ---------------------
@@ -134,9 +136,9 @@ Assuming you are creating the invoicing plugin as used above, this will result i
 
     final class VendorNameSyliusInvoiceExtension extends Extension
     {
-        public function load(array $config, ContainerBuilder $container): void
+        public function load(array $configs, ContainerBuilder $container): void
         {
-            $config = $this->processConfiguration($this->getConfiguration([], $container), $config);
+            $config = $this->processConfiguration($this->getConfiguration([], $container), $configs);
             $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         }
     }

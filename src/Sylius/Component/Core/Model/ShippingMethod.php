@@ -29,67 +29,55 @@ class ShippingMethod extends BaseShippingMethod implements ShippingMethodInterfa
     /** @var TaxCategoryInterface */
     protected $taxCategory;
 
-    /** @var Collection */
+    /**
+     * @var Collection|ChannelInterface[]
+     *
+     * @psalm-var Collection<array-key, ChannelInterface>
+     */
     protected $channels;
 
     public function __construct()
     {
         parent::__construct();
 
+        /** @var ArrayCollection<array-key, ChannelInterface> $this->channels */
         $this->channels = new ArrayCollection();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getZone(): ?ZoneInterface
     {
         return $this->zone;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setZone(?ZoneInterface $zone): void
     {
         $this->zone = $zone;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTaxCategory(): ?TaxCategoryInterface
     {
         return $this->taxCategory;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setTaxCategory(?TaxCategoryInterface $category): void
     {
         $this->taxCategory = $category;
     }
 
     /**
-     * {@inheritdoc}
+     * @psalm-suppress InvalidReturnType https://github.com/doctrine/collections/pull/220
+     * @psalm-suppress InvalidReturnStatement https://github.com/doctrine/collections/pull/220
      */
     public function getChannels(): Collection
     {
         return $this->channels;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasChannel(BaseChannelInterface $channel): bool
     {
         return $this->channels->contains($channel);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addChannel(BaseChannelInterface $channel): void
     {
         if (!$this->hasChannel($channel)) {
@@ -97,9 +85,6 @@ class ShippingMethod extends BaseShippingMethod implements ShippingMethodInterfa
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function removeChannel(BaseChannelInterface $channel): void
     {
         if ($this->hasChannel($channel)) {
@@ -107,9 +92,6 @@ class ShippingMethod extends BaseShippingMethod implements ShippingMethodInterfa
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getTranslationClass(): string
     {
         return ShippingMethodTranslation::class;

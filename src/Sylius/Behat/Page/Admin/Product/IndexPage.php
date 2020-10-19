@@ -19,7 +19,7 @@ use Sylius\Behat\Service\Accessor\TableAccessorInterface;
 use Sylius\Behat\Service\Checker\ImageExistenceCheckerInterface;
 use Symfony\Component\Routing\RouterInterface;
 
-final class IndexPage extends CrudIndexPage implements IndexPageInterface
+class IndexPage extends CrudIndexPage implements IndexPageInterface
 {
     /** @var ImageExistenceCheckerInterface */
     private $imageExistenceChecker;
@@ -37,9 +37,19 @@ final class IndexPage extends CrudIndexPage implements IndexPageInterface
         $this->imageExistenceChecker = $imageExistenceChecker;
     }
 
+    public function filter(): void
+    {
+        $this->getElement('filter')->press();
+    }
+
     public function filterByTaxon(string $taxonName): void
     {
         $this->getElement('taxon_filter', ['%taxon%' => $taxonName])->click();
+    }
+
+    public function chooseChannelFilter(string $channelName): void
+    {
+        $this->getElement('channel_filter')->selectOption($channelName);
     }
 
     public function hasProductAccessibleImage(string $productCode): bool
@@ -62,6 +72,7 @@ final class IndexPage extends CrudIndexPage implements IndexPageInterface
     protected function getDefinedElements(): array
     {
         return array_merge(parent::getDefinedElements(), [
+            'channel_filter' => '#criteria_channel',
             'taxon_filter' => '.sylius-tree__item a:contains("%taxon%")',
         ]);
     }

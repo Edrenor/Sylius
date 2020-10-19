@@ -23,7 +23,9 @@ use Sylius\Component\Resource\Repository\RepositoryInterface;
 final class DefaultChannelFactory implements DefaultChannelFactoryInterface
 {
     public const DEFAULT_CHANNEL_NAME = 'Default';
+
     public const DEFAULT_CHANNEL_CODE = 'DEFAULT';
+
     public const DEFAULT_CHANNEL_CURRENCY = 'USD';
 
     /** @var ChannelFactoryInterface */
@@ -65,9 +67,6 @@ final class DefaultChannelFactory implements DefaultChannelFactoryInterface
         $this->defaultLocaleCode = $defaultLocaleCode;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function create(?string $code = null, ?string $name = null, ?string $currencyCode = null): array
     {
         $currency = $this->provideCurrency($currencyCode);
@@ -97,7 +96,7 @@ final class DefaultChannelFactory implements DefaultChannelFactoryInterface
     {
         $currencyCode = $currencyCode ?? self::DEFAULT_CHANNEL_CURRENCY;
 
-        /** @var CurrencyInterface $currency */
+        /** @var CurrencyInterface|null $currency */
         $currency = $this->currencyRepository->findOneBy(['code' => $currencyCode]);
 
         if (null === $currency) {
@@ -113,7 +112,7 @@ final class DefaultChannelFactory implements DefaultChannelFactoryInterface
 
     private function provideLocale(): LocaleInterface
     {
-        /** @var LocaleInterface $locale */
+        /** @var LocaleInterface|null $locale */
         $locale = $this->localeRepository->findOneBy(['code' => $this->defaultLocaleCode]);
 
         if (null === $locale) {

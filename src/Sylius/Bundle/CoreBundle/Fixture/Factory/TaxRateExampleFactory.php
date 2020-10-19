@@ -55,9 +55,6 @@ class TaxRateExampleFactory extends AbstractExampleFactory implements ExampleFac
         $this->configureOptions($this->optionsResolver);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function create(array $options = []): TaxRateInterface
     {
         $options = $this->optionsResolver->resolve($options);
@@ -76,9 +73,6 @@ class TaxRateExampleFactory extends AbstractExampleFactory implements ExampleFac
         return $taxRate;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
@@ -86,7 +80,10 @@ class TaxRateExampleFactory extends AbstractExampleFactory implements ExampleFac
                 return StringInflector::nameToCode($options['name']);
             })
             ->setDefault('name', function (Options $options): string {
-                return $this->faker->words(3, true);
+                /** @var string $words */
+                $words = $this->faker->words(3, true);
+
+                return $words;
             })
             ->setDefault('amount', function (Options $options): float {
                 return $this->faker->randomFloat(2, 0, 0.4);

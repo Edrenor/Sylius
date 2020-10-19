@@ -20,9 +20,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class SyliusCurrencyBundle extends AbstractResourceBundle
 {
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerBuilder $container): void
     {
         parent::build($container);
@@ -30,9 +27,6 @@ final class SyliusCurrencyBundle extends AbstractResourceBundle
         $container->addCompilerPass(new CompositeCurrencyContextPass());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSupportedDrivers(): array
     {
         return [
@@ -42,7 +36,7 @@ final class SyliusCurrencyBundle extends AbstractResourceBundle
     }
 
     /**
-     * {@inheritdoc}
+     * @psalm-suppress MismatchingDocblockReturnType https://github.com/vimeo/psalm/issues/2345
      */
     protected function getModelNamespace(): string
     {

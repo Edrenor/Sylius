@@ -14,9 +14,11 @@ declare(strict_types=1);
 namespace Sylius\Behat\Context\Ui\Admin;
 
 use Behat\Behat\Context\Context;
+use Sylius\Behat\NotificationType;
 use Sylius\Behat\Page\Admin\Taxon\CreateForParentPageInterface;
 use Sylius\Behat\Page\Admin\Taxon\CreatePageInterface;
 use Sylius\Behat\Page\Admin\Taxon\UpdatePageInterface;
+use Sylius\Behat\Service\NotificationCheckerInterface;
 use Sylius\Behat\Service\Resolver\CurrentPageResolverInterface;
 use Sylius\Behat\Service\SharedStorageInterface;
 use Sylius\Component\Core\Model\TaxonInterface;
@@ -39,18 +41,23 @@ final class ManagingTaxonsContext implements Context
     /** @var CurrentPageResolverInterface */
     private $currentPageResolver;
 
+    /** @var NotificationCheckerInterface */
+    private $notificationChecker;
+
     public function __construct(
         SharedStorageInterface $sharedStorage,
         CreatePageInterface $createPage,
         CreateForParentPageInterface $createForParentPage,
         UpdatePageInterface $updatePage,
-        CurrentPageResolverInterface $currentPageResolver
+        CurrentPageResolverInterface $currentPageResolver,
+        NotificationCheckerInterface $notificationChecker
     ) {
         $this->sharedStorage = $sharedStorage;
         $this->createPage = $createPage;
         $this->createForParentPage = $createForParentPage;
         $this->updatePage = $updatePage;
         $this->currentPageResolver = $currentPageResolver;
+        $this->notificationChecker = $notificationChecker;
     }
 
     /**
@@ -149,6 +156,7 @@ final class ManagingTaxonsContext implements Context
     }
 
     /**
+     * @Given /^I set its (parent taxon to "[^"]+")$/
      * @Given /^I change its (parent taxon to "[^"]+")$/
      */
     public function iChangeItsParentTaxonTo(TaxonInterface $taxon)
@@ -378,6 +386,73 @@ final class ManagingTaxonsContext implements Context
         $this->iWantToModifyATaxon($taxon);
 
         Assert::same($this->updatePage->countImages(), (int) $count);
+    }
+
+    /**
+     * @Then I should be notified that I cannot delete a menu taxon of any channel
+     */
+    public function iShouldBeNotifiedThatICannotDeleteAMenuTaxonOfAnyChannel(): void
+    {
+        $this->notificationChecker->checkNotification(
+            'You cannot delete a menu taxon of any channel.',
+            NotificationType::failure()
+        );
+    }
+
+    /**
+     * @When I move up :taxonName taxon
+     */
+    public function iMoveUpTaxon(string $taxonName)
+    {
+        $this->createPage->moveUpTaxon($taxonName);
+    }
+
+    /**
+     * @When I move down :taxonName taxon
+     */
+    public function iMoveDownTaxon(string $taxonName)
+    {
+        $this->createPage->moveDownTaxon($taxonName);
+    }
+
+    /**
+     * @Then the first taxon on the list should be :taxonName
+     */
+    public function theFirstTaxonOnTheListShouldBe(string $taxonName)
+    {
+        Assert::same($this->createPage->getFirstTaxonOnTheList(), $taxonName);
+    }
+
+    /**
+     * @When I enable it
+     */
+    public function iEnableIt(): void
+    {
+        $this->updatePage->enable();
+    }
+
+    /**
+     * @When I disable it
+     */
+    public function iDisableIt(): void
+    {
+        $this->updatePage->disable();
+    }
+
+    /**
+     * @Then /^(?:this taxon|it) should be enabled$/
+     */
+    public function itShouldBeEnabled(): void
+    {
+        Assert::true($this->updatePage->isEnabled());
+    }
+
+    /**
+     * @Then /^(?:this taxon|it) should be disabled$/
+     */
+    public function itShouldBeDisabled(): void
+    {
+        Assert::false($this->updatePage->isEnabled());
     }
 
     /**

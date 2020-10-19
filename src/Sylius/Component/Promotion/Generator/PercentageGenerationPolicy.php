@@ -30,9 +30,6 @@ final class PercentageGenerationPolicy implements GenerationPolicyInterface
         $this->ratio = $ratio;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isGenerationPossible(PromotionCouponGeneratorInstructionInterface $instruction): bool
     {
         $expectedGenerationAmount = $instruction->getAmount();
@@ -41,9 +38,6 @@ final class PercentageGenerationPolicy implements GenerationPolicyInterface
         return $possibleGenerationAmount >= $expectedGenerationAmount;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPossibleGenerationAmount(PromotionCouponGeneratorInstructionInterface $instruction): int
     {
         return $this->calculatePossibleGenerationAmount($instruction);
@@ -62,8 +56,17 @@ final class PercentageGenerationPolicy implements GenerationPolicyInterface
             'Code length or amount cannot be null.'
         );
 
-        $generatedAmount = $this->couponRepository->countByCodeLength($expectedCodeLength);
+        $generatedAmount = $this->couponRepository->countByCodeLength(
+            $expectedCodeLength,
+            $instruction->getPrefix(),
+            $instruction->getSuffix()
+        );
 
-        return (int) floor((16 ** $expectedCodeLength) * $this->ratio - $generatedAmount);
+        $codeCombination = 16 ** $expectedCodeLength * $this->ratio;
+        if ($codeCombination >= \PHP_INT_MAX) {
+            return \PHP_INT_MAX - $generatedAmount;
+        }
+
+        return (int) $codeCombination - $generatedAmount;
     }
 }

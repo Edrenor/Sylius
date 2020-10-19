@@ -23,9 +23,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class SyliusPromotionBundle extends AbstractResourceBundle
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getSupportedDrivers(): array
     {
         return [
@@ -33,9 +30,6 @@ final class SyliusPromotionBundle extends AbstractResourceBundle
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerBuilder $container): void
     {
         parent::build($container);
@@ -48,7 +42,7 @@ final class SyliusPromotionBundle extends AbstractResourceBundle
     }
 
     /**
-     * {@inheritdoc}
+     * @psalm-suppress MismatchingDocblockReturnType https://github.com/vimeo/psalm/issues/2345
      */
     protected function getModelNamespace(): string
     {

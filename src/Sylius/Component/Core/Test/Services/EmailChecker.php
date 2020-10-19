@@ -27,9 +27,6 @@ final class EmailChecker implements EmailCheckerInterface
         $this->spoolDirectory = $spoolDirectory;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasRecipient(string $recipient): bool
     {
         $this->assertRecipientIsValid($recipient);
@@ -44,9 +41,6 @@ final class EmailChecker implements EmailCheckerInterface
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasMessageTo(string $message, string $recipient): bool
     {
         $this->assertRecipientIsValid($recipient);
@@ -54,7 +48,11 @@ final class EmailChecker implements EmailCheckerInterface
         $messages = $this->getMessages($this->spoolDirectory);
         foreach ($messages as $sentMessage) {
             if ($this->isMessageTo($sentMessage, $recipient)) {
-                if (false !== strpos($sentMessage->getBody(), $message)) {
+                $body = strip_tags($sentMessage->getBody());
+                $body = str_replace("\n", ' ', $body);
+                $body = preg_replace('/ {2,}/', ' ', $body);
+
+                if (false !== strpos($body, $message)) {
                     return true;
                 }
             }
@@ -63,9 +61,6 @@ final class EmailChecker implements EmailCheckerInterface
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function countMessagesTo(string $recipient): int
     {
         $this->assertRecipientIsValid($recipient);
@@ -82,9 +77,6 @@ final class EmailChecker implements EmailCheckerInterface
         return $messagesCount;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSpoolDirectory(): string
     {
         return $this->spoolDirectory;
@@ -101,7 +93,6 @@ final class EmailChecker implements EmailCheckerInterface
     private function assertRecipientIsValid(string $recipient): void
     {
         Assert::notEmpty($recipient, 'The recipient cannot be empty.');
-        Assert::string($recipient, sprintf('The recipient must be a string, %s given.', gettype($recipient)));
         Assert::notEq(
             false,
             filter_var($recipient, \FILTER_VALIDATE_EMAIL),

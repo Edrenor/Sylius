@@ -20,9 +20,6 @@ use Sylius\Component\Taxonomy\Repository\TaxonRepositoryInterface;
 
 class TaxonRepository extends EntityRepository implements TaxonRepositoryInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function findChildren(string $parentCode, ?string $locale = null): array
     {
         return $this->createTranslationBasedQueryBuilder($locale)
@@ -37,14 +34,27 @@ class TaxonRepository extends EntityRepository implements TaxonRepositoryInterfa
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    public function findChildrenByChannelMenuTaxon(?TaxonInterface $menuTaxon = null, ?string $locale = null): array
+    {
+        return $this->createTranslationBasedQueryBuilder($locale)
+            ->addSelect('child')
+            ->innerJoin('o.parent', 'parent')
+            ->leftJoin('o.children', 'child')
+            ->andWhere('o.enabled = true')
+            ->andWhere('parent.code = :parentCode')
+            ->addOrderBy('o.position')
+            ->setParameter('parentCode', ($menuTaxon !== null) ? $menuTaxon->getCode() : 'category')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     public function findOneBySlug(string $slug, string $locale): ?TaxonInterface
     {
         return $this->createQueryBuilder('o')
             ->addSelect('translation')
             ->innerJoin('o.translations', 'translation')
+            ->andWhere('o.enabled = true')
             ->andWhere('translation.slug = :slug')
             ->andWhere('translation.locale = :locale')
             ->setParameter('slug', $slug)
@@ -54,9 +64,6 @@ class TaxonRepository extends EntityRepository implements TaxonRepositoryInterfa
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findByName(string $name, string $locale): array
     {
         return $this->createQueryBuilder('o')
@@ -71,9 +78,6 @@ class TaxonRepository extends EntityRepository implements TaxonRepositoryInterfa
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findRootNodes(): array
     {
         return $this->createQueryBuilder('o')
@@ -84,9 +88,6 @@ class TaxonRepository extends EntityRepository implements TaxonRepositoryInterfa
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findByNamePart(string $phrase, ?string $locale = null, ?int $limit = null): array
     {
         return $this->createTranslationBasedQueryBuilder($locale)
@@ -98,15 +99,12 @@ class TaxonRepository extends EntityRepository implements TaxonRepositoryInterfa
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function createListQueryBuilder(): QueryBuilder
     {
         return $this->createQueryBuilder('o')->leftJoin('o.translations', 'translation');
     }
 
-    private function createTranslationBasedQueryBuilder(?string $locale): QueryBuilder
+    protected function createTranslationBasedQueryBuilder(?string $locale): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('o')
             ->addSelect('translation')

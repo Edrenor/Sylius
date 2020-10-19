@@ -13,11 +13,11 @@ declare(strict_types=1);
 
 namespace Sylius\Bundle\PromotionBundle\Command;
 
-use Sylius\Component\Core\Model\PromotionInterface;
-use Sylius\Component\Core\Repository\PromotionRepositoryInterface;
 use Sylius\Component\Promotion\Generator\PromotionCouponGeneratorInstruction;
 use Sylius\Component\Promotion\Generator\PromotionCouponGeneratorInstructionInterface;
 use Sylius\Component\Promotion\Generator\PromotionCouponGeneratorInterface;
+use Sylius\Component\Promotion\Model\PromotionInterface;
+use Sylius\Component\Promotion\Repository\PromotionRepositoryInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -26,6 +26,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class GenerateCouponsCommand extends Command
 {
+    protected static $defaultName = 'sylius:promotion:generate-coupons';
+
     /** @var PromotionRepositoryInterface */
     private $promotionRepository;
 
@@ -45,7 +47,6 @@ final class GenerateCouponsCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setName('sylius:promotion:generate-coupons')
             ->setDescription('Generates coupons for a given promotion')
             ->addArgument('promotion-code', InputArgument::REQUIRED, 'Code of the promotion')
             ->addArgument('count', InputArgument::REQUIRED, 'Amount of coupons to generate')

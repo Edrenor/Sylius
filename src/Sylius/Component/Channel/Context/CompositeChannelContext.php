@@ -18,7 +18,11 @@ use Zend\Stdlib\PriorityQueue;
 
 final class CompositeChannelContext implements ChannelContextInterface
 {
-    /** @var PriorityQueue|ChannelContextInterface[] */
+    /**
+     * @var PriorityQueue|ChannelContextInterface[]
+     *
+     * @psalm-var PriorityQueue<ChannelContextInterface>
+     */
     private $channelContexts;
 
     public function __construct()
@@ -31,9 +35,6 @@ final class CompositeChannelContext implements ChannelContextInterface
         $this->channelContexts->insert($channelContext, $priority);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getChannel(): ChannelInterface
     {
         foreach ($this->channelContexts as $channelContext) {

@@ -15,6 +15,7 @@ namespace Sylius\Behat\Page\Admin\Product;
 
 use Behat\Mink\Driver\Selenium2Driver;
 use Behat\Mink\Element\NodeElement;
+use DMore\ChromeDriver\ChromeDriver;
 use Sylius\Behat\Behaviour\ChecksCodeImmutability;
 use Sylius\Behat\Page\Admin\Crud\UpdatePage as BaseUpdatePage;
 use Sylius\Behat\Service\AutocompleteHelper;
@@ -37,7 +38,7 @@ class UpdateSimpleProductPage extends BaseUpdatePage implements UpdateSimpleProd
         $this->activateLanguageTab($localeCode);
         $this->getElement('name', ['%locale%' => $localeCode])->setValue($name);
 
-        if ($this->getDriver() instanceof Selenium2Driver) {
+        if ($this->getDriver() instanceof Selenium2Driver || $this->getDriver() instanceof ChromeDriver) {
             SlugGenerationHelper::waitForSlugGeneration(
                 $this->getSession(),
                 $this->getElement('slug', ['%locale%' => $localeCode])
@@ -45,14 +46,14 @@ class UpdateSimpleProductPage extends BaseUpdatePage implements UpdateSimpleProd
         }
     }
 
-    public function specifyPrice(string $channelName, string $price): void
+    public function specifyPrice(ChannelInterface $channel, string $price): void
     {
-        $this->getElement('price', ['%channelName%' => $channelName])->setValue($price);
+        $this->getElement('price', ['%channelCode%' => $channel->getCode()])->setValue($price);
     }
 
-    public function specifyOriginalPrice(string $channelName, string $originalPrice): void
+    public function specifyOriginalPrice(ChannelInterface $channel, string $originalPrice): void
     {
-        $this->getElement('original_price', ['%channelName%' => $channelName])->setValue($originalPrice);
+        $this->getElement('original_price', ['%channelCode%' => $channel->getCode()])->setValue($originalPrice);
     }
 
     public function addSelectedAttributes(): void
@@ -237,8 +238,6 @@ class UpdateSimpleProductPage extends BaseUpdatePage implements UpdateSimpleProd
     {
         $this->clickTab('associations');
 
-        Assert::isInstanceOf($this->getDriver(), Selenium2Driver::class);
-
         $dropdown = $this->getElement('association_dropdown', [
             '%association%' => $productAssociationType->getName(),
         ]);
@@ -309,7 +308,7 @@ class UpdateSimpleProductPage extends BaseUpdatePage implements UpdateSimpleProd
 
     public function activateLanguageTab(string $locale): void
     {
-        if (!$this->getDriver() instanceof Selenium2Driver) {
+        if (!$this->getDriver() instanceof Selenium2Driver && !$this->getDriver() instanceof ChromeDriver) {
             return;
         }
 
@@ -319,14 +318,14 @@ class UpdateSimpleProductPage extends BaseUpdatePage implements UpdateSimpleProd
         }
     }
 
-    public function getPriceForChannel(string $channelName): string
+    public function getPriceForChannel(ChannelInterface $channel): string
     {
-        return $this->getElement('price', ['%channelName%' => $channelName])->getValue();
+        return $this->getElement('price', ['%channelCode%' => $channel->getCode()])->getValue();
     }
 
-    public function getOriginalPriceForChannel(string $channelName): string
+    public function getOriginalPriceForChannel(ChannelInterface $channel): string
     {
-        return $this->getElement('original_price', ['%channelName%' => $channelName])->getValue();
+        return $this->getElement('original_price', ['%channelCode%' => $channel->getCode()])->getValue();
     }
 
     public function isShippingRequired(): bool
@@ -369,6 +368,26 @@ class UpdateSimpleProductPage extends BaseUpdatePage implements UpdateSimpleProd
         $this->getElement('show_product_single_button')->click();
     }
 
+    public function disable(): void
+    {
+        $this->getElement('enabled')->uncheck();
+    }
+
+    public function isEnabled(): bool
+    {
+        return $this->getElement('enabled')->isChecked();
+    }
+
+    public function enable(): void
+    {
+        $this->getElement('enabled')->check();
+    }
+
+    public function hasNoPriceForChannel(string $channelName): bool
+    {
+        return strpos($this->getElement('prices')->getHtml(), $channelName) === false;
+    }
+
     protected function getCodeElement(): NodeElement
     {
         return $this->getElement('code');
@@ -397,8 +416,9 @@ class UpdateSimpleProductPage extends BaseUpdatePage implements UpdateSimpleProd
             'language_tab' => '[data-locale="%locale%"] .title',
             'locale_tab' => '#attributesContainer .menu [data-tab="%localeCode%"]',
             'name' => '#sylius_product_translations_%locale%_name',
-            'original_price' => '#sylius_product_variant_channelPricings > .field:contains("%channelName%") input[name$="[originalPrice]"]',
-            'price' => '#sylius_product_variant_channelPricings > .field:contains("%channelName%") input[name$="[price]"]',
+            'prices' => '#sylius_product_variant_channelPricings',
+            'original_price' => '#sylius_product_variant_channelPricings input[name$="[originalPrice]"][id*="%channelCode%"]',
+            'price' => '#sylius_product_variant_channelPricings input[id*="%channelCode%"]',
             'pricing_configuration' => '#sylius_calculator_container',
             'main_taxon' => '#sylius_product_mainTaxon',
             'shipping_required' => '#sylius_product_variant_shippingRequired',
@@ -409,6 +429,7 @@ class UpdateSimpleProductPage extends BaseUpdatePage implements UpdateSimpleProd
             'taxonomy' => 'a[data-tab="taxonomy"]',
             'tracked' => '#sylius_product_variant_tracked',
             'toggle_slug_modification_button' => '[data-locale="%locale%"] .toggle-product-slug-modification',
+            'enabled' => '#sylius_product_enabled',
         ]);
     }
 

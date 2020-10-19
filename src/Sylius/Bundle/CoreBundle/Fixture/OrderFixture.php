@@ -31,7 +31,7 @@ class OrderFixture extends AbstractFixture
     /** @var OrderExampleFactory */
     protected $orderExampleFactory;
 
-    /** @var ObjectManager  */
+    /** @var ObjectManager */
     protected $orderManager;
 
     /** @var \Faker\Generator */
@@ -113,16 +113,17 @@ class OrderFixture extends AbstractFixture
                 ->scalarNode('channel')->cannotBeEmpty()->end()
                 ->scalarNode('customer')->cannotBeEmpty()->end()
                 ->scalarNode('country')->cannotBeEmpty()->end()
+                ->booleanNode('fulfilled')->defaultValue(false)->end()
             ->end()
         ;
     }
 
     private function generateDates(int $amount): array
     {
+        /** @var \DateTimeInterface[] $dates */
         $dates = [];
 
         for ($i = 0; $i < $amount; ++$i) {
-            /** @var \DateTimeInterface|array $dates */
             $dates[] = $this->faker->dateTimeBetween('-1 years', 'now');
         }
 

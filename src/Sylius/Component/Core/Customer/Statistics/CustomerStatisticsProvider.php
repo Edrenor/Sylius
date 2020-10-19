@@ -33,9 +33,6 @@ final class CustomerStatisticsProvider implements CustomerStatisticsProviderInte
         $this->channelRepository = $channelRepository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCustomerStatistics(CustomerInterface $customer): CustomerStatistics
     {
         $orders = $this->orderRepository->findForCustomerStatistics($customer);
@@ -67,7 +64,7 @@ final class CustomerStatisticsProvider implements CustomerStatisticsProviderInte
      */
     private function getOrdersSummedTotal(array $orders): int
     {
-        return array_sum(
+        return (int) array_sum(
             array_map(function (OrderInterface $order) {
                 return $order->getTotal();
             }, $orders)

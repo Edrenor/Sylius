@@ -34,7 +34,11 @@ final class ProductsToProductAssociationsTransformer implements DataTransformerI
     /** @var RepositoryInterface */
     private $productAssociationTypeRepository;
 
-    /** @var Collection */
+    /**
+     * @var Collection|ProductAssociationInterface[]
+     *
+     * @psalm-var Collection<array-key, ProductAssociationInterface>
+     */
     private $productAssociations;
 
     public function __construct(
@@ -47,9 +51,6 @@ final class ProductsToProductAssociationsTransformer implements DataTransformerI
         $this->productAssociationTypeRepository = $productAssociationTypeRepository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function transform($productAssociations)
     {
         $this->setProductAssociations($productAssociations);
@@ -70,15 +71,15 @@ final class ProductsToProductAssociationsTransformer implements DataTransformerI
         return $values;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function reverseTransform($values): ?Collection
     {
         if (null === $values || '' === $values || !is_array($values)) {
             return null;
         }
 
+        /**
+         * @psalm-var Collection<array-key, ProductAssociationInterface> $productAssociations
+         */
         $productAssociations = new ArrayCollection();
         foreach ($values as $productAssociationTypeCode => $productCodes) {
             if (null === $productCodes) {

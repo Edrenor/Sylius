@@ -8,10 +8,12 @@
         <div class="ui hidden divider"></div>
         <div class="ui segment">
             {{ form_row(form.code) }}
+            {{ form_row(form.enabled) }}
             <div class="two fields">
                 {{ form_row(form.shippingCategory) }}
             </div>
-            {{ form_row(form.channelPricings) }}
+            {{form_label(form.channelPricings)}}
+            {% include "@SyliusAdmin/Product/_channel_pricing.html.twig" with { product: product_variant.product, variantForm: form } only %}
         </div>
         <div class="ui segment">
             <div class="one field">
@@ -37,5 +39,5 @@
         </div>
     </div>
 
-    {{ sonata_block_render_event('sylius.admin.product_variant.' ~ action ~ '.tab_details', {'form': form}) }}
+    {{ sylius_template_event(['sylius.admin.product_variant.' ~ action ~ '.tab_details', 'sylius.admin.product_variant.tab_details'], {'form': form}) }}
 </div>

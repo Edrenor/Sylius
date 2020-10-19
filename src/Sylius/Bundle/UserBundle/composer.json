@@ -2,13 +2,18 @@
     "name": "sylius/user-bundle",
     "type": "symfony-bundle",
     "description": "Users management for Symfony projects.",
-    "keywords": ["user", "registration", "login", "groups"],
-    "homepage": "http://sylius.com",
+    "keywords": [
+        "user",
+        "registration",
+        "login",
+        "groups"
+    ],
+    "homepage": "https://sylius.com",
     "license": "MIT",
     "authors": [
         {
             "name": "Paweł Jędrzejewski",
-            "homepage": "http://pjedrzejewski.com"
+            "homepage": "https://pjedrzejewski.com"
         },
         {
             "name": "Michał Marcinkowski",
@@ -24,32 +29,34 @@
         },
         {
             "name": "Sylius project",
-            "homepage": "http://sylius.com"
+            "homepage": "https://sylius.com"
         },
         {
             "name": "Community contributions",
-            "homepage": "http://github.com/Sylius/Sylius/contributors"
+            "homepage": "https://github.com/Sylius/Sylius/contributors"
         }
     ],
     "require": {
-        "php": "^7.2",
-
-        "doctrine/orm": "^2.5",
-		"egulias/email-validator": "~2.0",
-        "sylius/mailer-bundle": "^1.2",
-        "sylius/resource-bundle": "^1.2",
-        "sylius/user": "^1.2",
-        "symfony/framework-bundle": "^3.4|^4.3",
-        "webmozart/assert": "^1.0"
+        "php": "^7.3",
+        "doctrine/orm": "^2.7",
+        "egulias/email-validator": "^2.1",
+        "sylius/mailer-bundle": "^1.4",
+        "sylius/resource-bundle": "^1.6",
+        "sylius/user": "^1.6",
+        "symfony/framework-bundle": "^4.4",
+        "webmozart/assert": "^1.8"
+    },
+    "conflict": {
+        "twig/twig": "^3.0"
     },
     "require-dev": {
-        "hwi/oauth-bundle": "^0.6",
-        "matthiasnoback/symfony-dependency-injection-test": "^2.0",
-        "php-http/guzzle6-adapter": "^1.1",
-        "phpspec/phpspec": "^5.0",
-        "phpunit/phpunit": "^7.0",
-        "symfony/dependency-injection": "^3.4|^4.3",
-        "symfony/security-bundle": "^3.4|^4.3",
+        "hwi/oauth-bundle": "^1.1",
+        "matthiasnoback/symfony-dependency-injection-test": "^4.1",
+        "php-http/guzzle6-adapter": "^2.0",
+        "phpspec/phpspec": "^6.1",
+        "phpunit/phpunit": "^8.5",
+        "symfony/dependency-injection": "^4.4",
+        "symfony/security-bundle": "^4.4",
         "symfony/swiftmailer-bundle": "^3.1"
     },
     "suggest": {
@@ -58,24 +65,35 @@
     "config": {
         "bin-dir": "bin"
     },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.9-dev"
+        }
+    },
     "autoload": {
-        "psr-4": { "Sylius\\Bundle\\UserBundle\\": "" },
-        "exclude-from-classmap": ["/Tests/"]
+        "psr-4": {
+            "Sylius\\Bundle\\UserBundle\\": ""
+        },
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
             "Sylius\\Bundle\\UserBundle\\Tests\\": "tests/"
         },
-        "files": ["Tests/Functional/app/AppKernel.php"]
+        "files": [
+            "Tests/Functional/app/AppKernel.php"
+        ]
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "repositories": [
         {
             "type": "path",
             "url": "../../*/*"
         }
     ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "scripts": {
         "test": [
             "@composer validate --strict",
@@ -85,10 +103,5 @@
             "bin/phpunit --colors=always",
             "bin/phpspec run --ansi --no-interaction"
         ]
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.6-dev"
-        }
     }
 }

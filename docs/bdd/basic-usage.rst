@@ -221,10 +221,10 @@ This gap will be more understandable on the below code example.
 
         protected function getDefinedElements(): array
         {
-            return ['sidebar' => ['css' => '.sidebar']]
+            return ['sidebar' => ['css' => '.sidebar']];
         }
 
-        protected function getUrl()
+        protected function getUrl(): string
         {
             return 'http://your_domain.com';
         }
@@ -233,19 +233,19 @@ This gap will be more understandable on the below code example.
     class LeagueIndexPage
     {
         // In this context you have for example football match results.
-        public function readMatchResults()
+        public function readMatchResults(): void
         {
             return $this->getElement('sidebar')->getText();
         }
 
         protected function getDefinedElements(): array
         {
-            return ['sidebar' => ['css' => '.sidebar']]
+            return ['sidebar' => ['css' => '.sidebar']];
         }
 
-        protected function getUrl()
+        protected function getUrl(): string
         {
-            return 'http://your_domain.com/leagues/'
+            return 'http://your_domain.com/leagues/';
         }
     }
 
@@ -257,7 +257,7 @@ This gap will be more understandable on the below code example.
         /**
          * @Given I want to be on Homepage
          */
-        public function iWantToBeOnHomePage() // After this method call we will be on "http://your_domain.com".
+        public function iWantToBeOnHomePage(): void// After this method call we will be on "http://your_domain.com".
         {
             $this->homePage->open(); //When we add @javascript tag we can actually see this thanks to selenium.
         }
@@ -265,9 +265,9 @@ This gap will be more understandable on the below code example.
         /**
          * @Then I want to see the sidebar and get information about the weather in France
          */
-        public function iWantToReadSideBarOnHomePage($someInformation) // Still "http://your_domain.com".
+        public function iWantToReadSideBarOnHomePage($someInformation): void // Still "http://your_domain.com".
         {
-            $someInformation === $this->leagueIndexPage->readMatchResults() // This returns true, but wait a second we are on home page (dummy pages).
+            $someInformation === $this->leagueIndexPage->readMatchResults(); // This returns true, but wait a second we are on home page (dummy pages).
 
             $someInformation === $this->homePage->readWeather() // This also returns true.
         }
@@ -359,7 +359,7 @@ Ui contexts
 
 .. code-block:: php
 
-    namespace Sylius\Behat\Context\Ui\Admin
+    namespace Sylius\Behat\Context\Ui\Admin;
 
     final class NotificationContext implements Context
     {

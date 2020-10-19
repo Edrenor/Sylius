@@ -40,9 +40,6 @@ class ApiClientExampleFactory extends AbstractExampleFactory
         $this->configureOptions($this->optionsResolver);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function create(array $options = []): ClientInterface
     {
         $options = $this->optionsResolver->resolve($options);
@@ -58,16 +55,13 @@ class ApiClientExampleFactory extends AbstractExampleFactory
         return $client;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
-            ->setDefault('random_id', function (Options $options) {
+            ->setDefault('random_id', function (Options $options): int {
                 return $this->faker->unique()->randomNumber(8);
             })
-            ->setDefault('secret', function (Options $options) {
+            ->setDefault('secret', function (Options $options): string {
                 return $this->faker->uuid;
             })
             ->setDefault('allowed_grant_types', [])

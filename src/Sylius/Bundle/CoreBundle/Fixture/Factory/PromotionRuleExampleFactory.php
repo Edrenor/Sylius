@@ -40,9 +40,6 @@ class PromotionRuleExampleFactory extends AbstractExampleFactory implements Exam
         $this->configureOptions($this->optionsResolver);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function create(array $options = []): PromotionRuleInterface
     {
         $options = $this->optionsResolver->resolve($options);
@@ -55,9 +52,6 @@ class PromotionRuleExampleFactory extends AbstractExampleFactory implements Exam
         return $promotionRule;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
@@ -66,7 +60,7 @@ class PromotionRuleExampleFactory extends AbstractExampleFactory implements Exam
             ->setDefault('configuration', [
                 'count' => $this->faker->randomNumber(1),
             ])
-            ->setNormalizer('configuration', function (Options $options, $configuration): array {
+            ->setNormalizer('configuration', function (Options $options, array $configuration): array {
                 foreach ($configuration as $channelCode => $channelConfiguration) {
                     if (isset($channelConfiguration['amount'])) {
                         $configuration[$channelCode]['amount'] = (int) ($configuration[$channelCode]['amount'] * 100);

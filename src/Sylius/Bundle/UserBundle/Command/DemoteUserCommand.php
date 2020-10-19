@@ -21,13 +21,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DemoteUserCommand extends AbstractRoleCommand
 {
-    /**
-     * {@inheritdoc}
-     */
+    protected static $defaultName = 'sylius:user:demote';
+
     protected function configure(): void
     {
         $this
-            ->setName('sylius:user:demote')
             ->setDescription('Demotes a user by removing a role.')
             ->setDefinition([
                 new InputArgument('email', InputArgument::REQUIRED, 'Email'),
@@ -43,27 +41,28 @@ EOT
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function executeRoleCommand(InputInterface $input, OutputInterface $output, UserInterface $user, array $securityRoles): void
     {
         $error = false;
+        $successMessages = [];
 
         foreach ($securityRoles as $securityRole) {
             if (!$user->hasRole($securityRole)) {
-                $output->writeln(sprintf('<error>User "%s" didn\'t have "%s" Security role.</error>', $user->getEmail(), $securityRole));
+                $output->writeln(sprintf('<error>User "%s" doesn\'t have "%s" Security role.</error>', $user->getEmail(), $securityRole));
                 $error = true;
 
                 continue;
             }
 
             $user->removeRole($securityRole);
-            $output->writeln(sprintf('Security role <comment>%s</comment> has been removed from user <comment>%s</comment>', $securityRole, $user->getEmail()));
+            $successMessages[] = sprintf('Security role <comment>%s</comment> has been removed from user <comment>%s</comment>', $securityRole, $user->getEmail());
         }
 
         if (!$error) {
+            $output->writeln($successMessages);
             $this->getEntityManager($input->getOption('user-type'))->flush();
+        } else {
+            $output->writeln(sprintf('<error>No roles removed from User "%s".</error>', $user->getEmail()));
         }
     }
 }

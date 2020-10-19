@@ -28,10 +28,13 @@ use Sylius\Component\Core\Model\ProductInterface;
 use Sylius\Component\Core\OrderCheckoutStates;
 use Sylius\Component\Core\OrderCheckoutTransitions;
 use Sylius\Component\Core\Repository\PaymentMethodRepositoryInterface;
+use Sylius\Component\Core\Repository\ProductRepositoryInterface;
 use Sylius\Component\Core\Repository\ShippingMethodRepositoryInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
+use Sylius\Component\Payment\PaymentTransitions;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
+use Sylius\Component\Shipping\ShipmentTransitions;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Webmozart\Assert\Assert;
@@ -56,7 +59,7 @@ class OrderExampleFactory extends AbstractExampleFactory implements ExampleFacto
     /** @var RepositoryInterface */
     protected $customerRepository;
 
-    /** @var RepositoryInterface */
+    /** @var ProductRepositoryInterface */
     protected $productRepository;
 
     /** @var RepositoryInterface */
@@ -93,7 +96,7 @@ class OrderExampleFactory extends AbstractExampleFactory implements ExampleFacto
         ObjectManager $orderManager,
         RepositoryInterface $channelRepository,
         RepositoryInterface $customerRepository,
-        RepositoryInterface $productRepository,
+        ProductRepositoryInterface $productRepository,
         RepositoryInterface $countryRepository,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         ShippingMethodRepositoryInterface $shippingMethodRepository,
@@ -126,8 +129,11 @@ class OrderExampleFactory extends AbstractExampleFactory implements ExampleFacto
     {
         $options = $this->optionsResolver->resolve($options);
 
-        $order = $this->createOrder($options['channel'], $options['customer'], $options['country']);
+        $order = $this->createOrder($options['channel'], $options['customer'], $options['country'], $options['complete_date']);
         $this->setOrderCompletedDate($order, $options['complete_date']);
+        if ($options['fulfilled']) {
+            $this->fulfillOrder($order);
+        }
 
         return $order;
     }
@@ -153,10 +159,13 @@ class OrderExampleFactory extends AbstractExampleFactory implements ExampleFacto
                 return $this->faker->dateTimeBetween('-1 years', 'now');
             })
             ->setAllowedTypes('complete_date', ['null', \DateTime::class])
+
+            ->setDefault('fulfilled', false)
+            ->setAllowedTypes('fulfilled', ['bool'])
         ;
     }
 
-    protected function createOrder(ChannelInterface $channel, CustomerInterface $customer, CountryInterface $country): OrderInterface
+    protected function createOrder(ChannelInterface $channel, CustomerInterface $customer, CountryInterface $country, \DateTimeInterface $createdAt): OrderInterface
     {
         $countryCode = $country->getCode();
 
@@ -173,8 +182,8 @@ class OrderExampleFactory extends AbstractExampleFactory implements ExampleFacto
         $this->generateItems($order);
 
         $this->address($order, $countryCode);
-        $this->selectShipping($order);
-        $this->selectPayment($order);
+        $this->selectShipping($order, $createdAt);
+        $this->selectPayment($order, $createdAt);
         $this->completeCheckout($order);
 
         return $order;
@@ -183,18 +192,20 @@ class OrderExampleFactory extends AbstractExampleFactory implements ExampleFacto
     protected function generateItems(OrderInterface $order): void
     {
         $numberOfItems = random_int(1, 5);
-        $products = $this->productRepository->findAll();
+        $channel = $order->getChannel();
+        $products = $this->productRepository->findLatestByChannel($channel, $order->getLocaleCode(), 100);
+        if (0 === count($products)) {
+            throw new \InvalidArgumentException(sprintf(
+                'You have no enabled products at the channel "%s", but they are required to create an orders for that channel',
+                $channel->getCode()
+            ));
+        }
+
         $generatedItems = [];
 
         for ($i = 0; $i < $numberOfItems; ++$i) {
             /** @var ProductInterface $product */
             $product = $this->faker->randomElement($products);
-
-            if (!$product->hasChannel($order->getChannel())) {
-                $i--;
-                continue;
-            }
-
             $variant = $this->faker->randomElement($product->getVariants()->toArray());
 
             if (array_key_exists($variant->getCode(), $generatedItems)) {
@@ -233,7 +244,7 @@ class OrderExampleFactory extends AbstractExampleFactory implements ExampleFacto
         $this->applyCheckoutStateTransition($order, OrderCheckoutTransitions::TRANSITION_ADDRESS);
     }
 
-    protected function selectShipping(OrderInterface $order): void
+    protected function selectShipping(OrderInterface $order, \DateTimeInterface $createdAt): void
     {
         if ($order->getCheckoutState() === OrderCheckoutStates::STATE_SHIPPING_SKIPPED) {
             return;
@@ -257,12 +268,13 @@ class OrderExampleFactory extends AbstractExampleFactory implements ExampleFacto
 
         foreach ($order->getShipments() as $shipment) {
             $shipment->setMethod($shippingMethod);
+            $shipment->setCreatedAt($createdAt);
         }
 
         $this->applyCheckoutStateTransition($order, OrderCheckoutTransitions::TRANSITION_SELECT_SHIPPING);
     }
 
-    protected function selectPayment(OrderInterface $order): void
+    protected function selectPayment(OrderInterface $order, \DateTimeInterface $createdAt): void
     {
         if ($order->getCheckoutState() === OrderCheckoutStates::STATE_PAYMENT_SKIPPED) {
             return;
@@ -279,6 +291,7 @@ class OrderExampleFactory extends AbstractExampleFactory implements ExampleFacto
 
         foreach ($order->getPayments() as $payment) {
             $payment->setMethod($paymentMethod);
+            $payment->setCreatedAt($createdAt);
         }
 
         $this->applyCheckoutStateTransition($order, OrderCheckoutTransitions::TRANSITION_SELECT_PAYMENT);
@@ -311,6 +324,32 @@ class OrderExampleFactory extends AbstractExampleFactory implements ExampleFacto
     {
         if ($order->getCheckoutState() === OrderCheckoutStates::STATE_COMPLETED) {
             $order->setCheckoutCompletedAt($date);
+        }
+    }
+
+    protected function fulfillOrder(OrderInterface $order): void
+    {
+        $this->completePayments($order);
+        $this->completeShipments($order);
+    }
+
+    protected function completePayments(OrderInterface $order): void
+    {
+        foreach ($order->getPayments() as $payment) {
+            $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
+            if ($stateMachine->can(PaymentTransitions::TRANSITION_COMPLETE)) {
+                $stateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
+            }
+        }
+    }
+
+    protected function completeShipments(OrderInterface $order): void
+    {
+        foreach ($order->getShipments() as $shipment) {
+            $stateMachine = $this->stateMachineFactory->get($shipment, ShipmentTransitions::GRAPH);
+            if ($stateMachine->can(ShipmentTransitions::TRANSITION_SHIP)) {
+                $stateMachine->apply(ShipmentTransitions::TRANSITION_SHIP);
+            }
         }
     }
 }

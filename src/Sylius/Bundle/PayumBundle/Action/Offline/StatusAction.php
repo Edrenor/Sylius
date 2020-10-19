@@ -21,9 +21,6 @@ use Payum\Offline\Constants;
 
 final class StatusAction implements ActionInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function execute($request): void
     {
         /** @var GetStatusInterface $request */
@@ -31,6 +28,7 @@ final class StatusAction implements ActionInterface
 
         $model = ArrayObject::ensureArrayObject($request->getModel());
 
+        /** @psalm-suppress DocblockTypeContradiction */
         if (false === $model[Constants::FIELD_STATUS]) {
             $request->markNew();
 
@@ -64,9 +62,6 @@ final class StatusAction implements ActionInterface
         $request->markUnknown();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supports($request): bool
     {
         return

@@ -1,38 +1,38 @@
-The REST API Reference
-======================
+Sylius API
+==========
+
+Unified API
+-----------
+
+.. warning::
+
+    The new, unified Sylius API is still under development, that's why the whole ``ApiBundle`` is tagged with ``@experimental``.
+    This means that all code from ``ApiBundle`` is excluded from :doc:`Backward Compatibility Promise </book/organization/backward-compatibility-promise>`.
+
+This part of the documentation is about the currently developed unified API for the Sylius platform.
 
 .. toctree::
     :hidden:
 
-    introduction
-    authorization
-    admin_users
-    carts
-    channels
-    checkouts
-    countries
-    currencies
-    customers
-    exchange_rates
-    locales
-    orders
-    payment_methods
-    payments
-    product_attributes
-    product_options
-    product_reviews
-    product_variants
-    products
-    promotion_coupons
-    promotions
-    provinces
-    shipments
-    shipping_categories
-    shipping_methods
-    tax_categories
-    tax_rates
-    taxons
-    zones
-    sorting_and_filtration
+    unified_api/index
 
-.. include:: /api/map.rst.inc
+.. include:: /api/unified_api/map.rst.inc
+
+Admin API
+---------
+
+This part of the documentation is about the old Admin API for the Sylius platform.
+
+.. toctree::
+    :hidden:
+
+    admin_api/index
+
+.. include:: /api/admin_api/map.rst.inc
+
+Shop API
+--------
+
+`Sylius Shop API <https://github.com/Sylius/ShopApiPlugin>`_ is an official plugin, providing customer-centered API.
+
+Follow the `API reference <https://app.swaggerhub.com/apis/Sylius/sylius-shop-api/1.0.0>`_ for more details.

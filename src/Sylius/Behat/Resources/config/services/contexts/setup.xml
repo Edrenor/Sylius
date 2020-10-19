@@ -29,6 +29,21 @@
             <argument type="service" id="behat.mink.parameters" />
         </service>
 
+        <service id="sylius.behat.context.setup.cart" class="Sylius\Behat\Context\Setup\CartContext">
+            <argument type="service" id="sylius_default.bus" />
+            <argument type="service" id="sylius.product_variant_resolver.default" />
+            <argument type="service" id="sylius.behat.shared_storage" />
+        </service>
+
+        <service id="sylius.behat.context.setup.checkout" class="Sylius\Behat\Context\Setup\CheckoutContext">
+            <argument type="service" id="sylius.repository.order"/>
+            <argument type="service" id="sylius.repository.shipping_method" />
+            <argument type="service" id="sylius.repository.payment_method" />
+            <argument type="service" id="sylius_default.bus" />
+            <argument type="service" id="sylius.factory.address" />
+            <argument type="service" id="sylius.behat.shared_storage" />
+        </service>
+
         <service id="sylius.behat.context.setup.channel" class="Sylius\Behat\Context\Setup\ChannelContext">
             <argument type="service" id="sylius.behat.shared_storage" />
             <argument type="service" id="sylius.behat.factory.default_united_states_channel" />
@@ -180,12 +195,20 @@
             <argument type="service" id="sylius.factory.promotion_rule" />
             <argument type="service" id="sylius.test.factory.promotion" />
             <argument type="service" id="sylius.repository.promotion" />
+            <argument type="service" id="sylius.promotion_coupon_generator" />
             <argument type="service" id="doctrine.orm.entity_manager" />
         </service>
 
         <service id="sylius.behat.context.setup.admin_security" class="Sylius\Behat\Context\Setup\AdminSecurityContext">
             <argument type="service" id="sylius.behat.shared_storage" />
             <argument type="service" id="sylius.behat.admin_security" />
+            <argument type="service" id="sylius.fixture.example_factory.admin_user" />
+            <argument type="service" id="sylius.repository.admin_user" />
+        </service>
+
+        <service id="sylius.behat.context.setup.admin_api_security" class="Sylius\Behat\Context\Setup\AdminSecurityContext">
+            <argument type="service" id="sylius.behat.shared_storage" />
+            <argument type="service" id="sylius.behat.admin_api_security" />
             <argument type="service" id="sylius.fixture.example_factory.admin_user" />
             <argument type="service" id="sylius.repository.admin_user" />
         </service>
@@ -197,12 +220,20 @@
             <argument type="service" id="sylius.repository.shop_user" />
         </service>
 
+        <service id="sylius.behat.context.setup.shop_api_security" class="Sylius\Behat\Context\Setup\ShopSecurityContext">
+            <argument type="service" id="sylius.behat.shared_storage" />
+            <argument type="service" id="sylius.behat.shop_api_security" />
+            <argument type="service" id="sylius.fixture.example_factory.shop_user" />
+            <argument type="service" id="sylius.repository.shop_user" />
+        </service>
+
         <service id="sylius.behat.context.setup.shipping" class="Sylius\Behat\Context\Setup\ShippingContext">
             <argument type="service" id="sylius.behat.shared_storage" />
             <argument type="service" id="sylius.repository.shipping_method" />
             <argument type="service" id="sylius.repository.zone" />
             <argument type="service" id="sylius.fixture.example_factory.shipping_method" />
             <argument type="service" id="sylius.factory.shipping_method_translation" />
+            <argument type="service" id="sylius.factory.shipping_method_rule" />
             <argument type="service" id="sylius.manager.shipping_method" />
         </service>
 
@@ -252,6 +283,10 @@
             <argument type="service" id="doctrine.orm.entity_manager" />
             <argument type="service" id="sylius.factory.zone" />
             <argument type="service" id="sylius.factory.zone_member" />
+        </service>
+
+        <service id="sylius.behat.context.setup.calendar" class="Sylius\Behat\Context\Setup\CalendarContext">
+            <argument>%kernel.project_dir%</argument>
         </service>
     </services>
 </container>

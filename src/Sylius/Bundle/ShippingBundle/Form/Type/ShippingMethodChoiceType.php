@@ -50,9 +50,6 @@ final class ShippingMethodChoiceType extends AbstractType
         $this->repository = $repository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if ($options['multiple']) {
@@ -60,9 +57,6 @@ final class ShippingMethodChoiceType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
@@ -86,7 +80,7 @@ final class ShippingMethodChoiceType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * @psalm-suppress MissingPropertyType
      */
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
@@ -112,17 +106,11 @@ final class ShippingMethodChoiceType extends AbstractType
         $view->vars['shipping_costs'] = $shippingCosts;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParent(): string
     {
         return ChoiceType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'sylius_shipping_method_choice';

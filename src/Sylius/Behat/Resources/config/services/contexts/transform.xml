@@ -53,11 +53,18 @@
         <service id="sylius.behat.context.transform.date_time" class="Sylius\Behat\Context\Transform\DateTimeContext">
         </service>
 
+        <service id="sylius.behat.context.transform.exchange_rate" class="Sylius\Behat\Context\Transform\ExchangeRateContext">
+            <argument type="service" id="sylius.currency_name_converter" />
+            <argument type="service" id="sylius.repository.currency" />
+            <argument type="service" id="sylius.repository.exchange_rate" />
+        </service>
+
         <service id="sylius.behat.context.transform.lexical" class="Sylius\Behat\Context\Transform\LexicalContext">
         </service>
 
         <service id="sylius.behat.context.transform.locale" class="Sylius\Behat\Context\Transform\LocaleContext">
             <argument type="service" id="sylius.locale_converter" />
+            <argument type="service" id="sylius.repository.locale" />
         </service>
 
         <service id="sylius.behat.context.transform.order" class="Sylius\Behat\Context\Transform\OrderContext">
@@ -71,6 +78,7 @@
 
         <service id="sylius.behat.context.transform.product" class="Sylius\Behat\Context\Transform\ProductContext">
             <argument type="service" id="sylius.repository.product" />
+            <argument>%locale%</argument>
         </service>
 
         <service id="sylius.behat.context.transform.product_association_type" class="Sylius\Behat\Context\Transform\ProductAssociationTypeContext">
@@ -88,6 +96,7 @@
         <service id="sylius.behat.context.transform.product_variant" class="Sylius\Behat\Context\Transform\ProductVariantContext">
             <argument type="service" id="sylius.repository.product" />
             <argument type="service" id="sylius.repository.product_variant" />
+            <argument type="service" id="sylius.behat.shared_storage" />
         </service>
 
         <service id="sylius.behat.context.transform.promotion" class="Sylius\Behat\Context\Transform\PromotionContext">
@@ -101,6 +110,10 @@
 
         <service id="sylius.behat.context.transform.shared_storage" class="Sylius\Behat\Context\Transform\SharedStorageContext">
             <argument type="service" id="sylius.behat.shared_storage" />
+        </service>
+        <service id="sylius.behat.context.transform.shipping_calculator" class="Sylius\Behat\Context\Transform\ShippingCalculatorContext">
+            <argument>%sylius.shipping_calculators%</argument>
+            <argument type="service" id="translator"/>
         </service>
 
         <service id="sylius.behat.context.transform.shipping_category" class="Sylius\Behat\Context\Transform\ShippingCategoryContext">
@@ -121,6 +134,7 @@
 
         <service id="sylius.behat.context.transform.taxon" class="Sylius\Behat\Context\Transform\TaxonContext">
             <argument type="service" id="sylius.repository.taxon" />
+            <argument>%locale%</argument>
         </service>
 
         <service id="sylius.behat.context.transform.theme" class="Sylius\Behat\Context\Transform\ThemeContext">
@@ -132,6 +146,13 @@
         </service>
 
         <service id="sylius.behat.context.transform.admin" class="Sylius\Behat\Context\Transform\AdminUserContext">
+            <argument type="service" id="sylius.repository.admin_user" />
+            <argument type="service" id="sylius.behat.shared_storage" />
+        </service>
+
+        <service id="sylius.behat.context.transform.cart" class="Sylius\Behat\Context\Transform\CartTokenContext">
+            <argument type="service" id="sylius_default.bus" />
+            <argument type="service" id="sylius.random_generator" />
             <argument type="service" id="sylius.behat.shared_storage" />
         </service>
 

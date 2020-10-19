@@ -16,7 +16,7 @@ namespace Sylius\Component\Addressing\Model;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Resource\Model\ToggleableTrait;
-use Symfony\Component\Intl\Intl;
+use Symfony\Component\Intl\Countries;
 
 class Country implements CountryInterface
 {
@@ -32,11 +32,16 @@ class Country implements CountryInterface
      */
     protected $code;
 
-    /** @var Collection|ProvinceInterface[] */
+    /**
+     * @var Collection|ProvinceInterface[]
+     *
+     * @psalm-var Collection<array-key, ProvinceInterface>
+     */
     protected $provinces;
 
     public function __construct()
     {
+        /** @var ArrayCollection<array-key, ProvinceInterface> $this->provinces */
         $this->provinces = new ArrayCollection();
     }
 
@@ -45,57 +50,36 @@ class Country implements CountryInterface
         return (string) ($this->getName() ?? $this->getCode());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getId()
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCode(): ?string
     {
         return $this->code;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setCode(?string $code): void
     {
         $this->code = $code;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName(?string $locale = null): ?string
     {
-        return Intl::getRegionBundle()->getCountryName($this->code, $locale);
+        return Countries::getName($this->code, $locale);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getProvinces(): Collection
     {
         return $this->provinces;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasProvinces(): bool
     {
         return !$this->provinces->isEmpty();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addProvince(ProvinceInterface $province): void
     {
         if (!$this->hasProvince($province)) {
@@ -104,9 +88,6 @@ class Country implements CountryInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function removeProvince(ProvinceInterface $province): void
     {
         if ($this->hasProvince($province)) {
@@ -115,9 +96,6 @@ class Country implements CountryInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasProvince(ProvinceInterface $province): bool
     {
         return $this->provinces->contains($province);

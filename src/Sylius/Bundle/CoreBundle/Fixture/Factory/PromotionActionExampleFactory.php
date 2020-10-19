@@ -40,9 +40,6 @@ class PromotionActionExampleFactory extends AbstractExampleFactory implements Ex
         $this->configureOptions($this->optionsResolver);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function create(array $options = []): PromotionActionInterface
     {
         $options = $this->optionsResolver->resolve($options);
@@ -55,9 +52,6 @@ class PromotionActionExampleFactory extends AbstractExampleFactory implements Ex
         return $promotionAction;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
@@ -66,7 +60,7 @@ class PromotionActionExampleFactory extends AbstractExampleFactory implements Ex
             ->setDefault('configuration', [
                 'percentage' => $this->faker->randomNumber(2),
             ])
-            ->setNormalizer('configuration', function (Options $options, $configuration): array {
+            ->setNormalizer('configuration', function (Options $options, array $configuration): array {
                 foreach ($configuration as $channelCode => $channelConfiguration) {
                     if (isset($channelConfiguration['amount'])) {
                         $configuration[$channelCode]['amount'] = (int) ($configuration[$channelCode]['amount'] * 100);

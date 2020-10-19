@@ -29,13 +29,11 @@ final class OrderPricesRecalculator implements OrderProcessorInterface
         $this->productVariantPriceCalculator = $productVariantPriceCalculator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function process(BaseOrderInterface $order): void
     {
         /** @var OrderInterface $order */
         Assert::isInstanceOf($order, OrderInterface::class);
+
         $channel = $order->getChannel();
 
         foreach ($order->getItems() as $item) {

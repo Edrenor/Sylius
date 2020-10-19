@@ -14,10 +14,13 @@ declare(strict_types=1);
 namespace Sylius\Behat\Page\Admin\Product;
 
 use FriendsOfBehat\PageObjectExtension\Page\SymfonyPageInterface;
+use Sylius\Component\Core\Model\ProductVariantInterface;
 
 interface ShowPageInterface extends SymfonyPageInterface
 {
     public function getName(): string;
+
+    public function getBreadcrumb(): string;
 
     public function isSimpleProductPage(): bool;
 
@@ -25,5 +28,9 @@ interface ShowPageInterface extends SymfonyPageInterface
 
     public function showProductInChannel(string $channel): void;
 
-    public function showProductInSingleChannel();
+    public function showProductInSingleChannel(): void;
+
+    public function showProductEditPage(): void;
+
+    public function showVariantEditPage(ProductVariantInterface $variant): void;
 }

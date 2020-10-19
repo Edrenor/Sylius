@@ -7,6 +7,7 @@ sylius:
         base_currency:
             not_blank: Please enter channel base currency.
         default_locale:
+            enabled: Default locale has to be enabled.
             not_blank: Please enter channel default locale.
         contact_email:
             invalid: This email is invalid.
@@ -14,7 +15,7 @@ sylius:
             min: Email must be at least {{ limit }} characters long.
     channel_pricing:
         price:
-            min: Price must be at least {{ limit }}.
+            min: Price cannot be lower than 0.
             not_blank: Please enter the price.
     checkout:
         shipping_method:

@@ -5,13 +5,30 @@ Shipments
 =========
 
 A **Shipment** is a representation of a shipping request for an Order. Sylius can attach multiple shipments to each single Order.
+Shipment consists of **ShipmentUnits**, which are a representation of OrderItemUnits from its Order.
 
 How is a Shipment created for an Order?
-'''''''''''''''''''''''''''''''''''''''
+---------------------------------------
 
 .. warning::
 
     Read more about creating :doc:`Orders </book/orders/orders>` where the process of assigning Shipments is clarified.
+
+.. rst-class:: plus-doc
+
+Splitting shipments
+~~~~~~~~~~~~~~~~~~~
+
+As mentioned in the beginning Sylius Order holds a collection of Shipments. In Sylius Plus edition Orders can be
+fulfilled partially, therefore it is possible to split the default Order's shipment.
+
+To do it Sylius Plus provides a UI, where you can choose which items from the initial shipments you'd like to extract to
+a new split shipment and send it (providing a tracking code or not). Shipments of an Order can be split as long as
+there remains one shipment in state ``ready``.
+
+.. image:: ../../_images/sylius_plus/banner.png
+    :align: center
+    :target: https://sylius.com/plus/?utm_source=docs
 
 The Shipment State Machine
 --------------------------
@@ -41,10 +58,10 @@ The allowed transitions between these states are:
 Shipping Methods
 ----------------
 
-**ShippingMethod** in Sylius is an entity that represent the way an order can be shipped to a customer.
+**ShippingMethod** in Sylius is an entity that represents the way an order can be shipped to a customer.
 
 How to create a ShippingMethod programmatically?
-''''''''''''''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As usual use a factory to create a new ShippingMethod. Give it a ``code``, set a desired shipping calculator and set a ``zone``.
 It also need a configuration, for instance of the amount (cost).
@@ -69,6 +86,29 @@ In order to have your shipping method available in checkout add it to a desired 
 
     $channel = $this->container->get('sylius.repository.channel')->findOneByCode('channel_code');
     $channel->addShippingMethod($shippingMethod);
+
+Shipping method rules
+'''''''''''''''''''''
+
+The shipping method **Rules** restrict in what circumstances a shipping method is available.
+An appropriate **RuleChecker** (each Rule type has its own RuleChecker) may check if:
+
+* All products belong to a certain taxon
+* The order total is greater than a given amount
+* The total weight is below a given number
+* The total volume is below a given value
+
+And many more similar, suitable to your needs.
+
+Rule Types
+''''''''''
+
+The types of rules that are configured in **Sylius** by default are:
+
+* **Order total greater than or equal** - checks if the order total is greater than or equal to a given amount
+* **Order total less than or equal** - checks if the order total is less than or equal to a given amount
+* **Total weight greater than or equal** - checks if the total weight of the order is greater than or equal to a given number
+* **Total weight less than or equal** - checks if the total weight of the order is less than or equal to a given number
 
 Shipping Zones
 --------------
@@ -118,8 +158,8 @@ There are two events that are triggered on the shipment ``ship`` action:
 | ``sylius.shipment.post_ship``       |
 +-------------------------------------+
 
-
 Learn more
 ----------
 
 * :doc:`Shipping - Component Documentation </components_and_bundles/components/Shipping/index>`
+* :doc:`How to create a custom shipping method rule? </cookbook/shipping-methods/custom-shipping-method-rule>`

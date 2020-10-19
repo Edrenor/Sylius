@@ -18,49 +18,39 @@ use Doctrine\Common\Collections\Collection;
 
 class ProductImage extends Image implements ProductImageInterface
 {
-    /** @var Collection|ProductVariantInterface[] */
+    /**
+     * @var Collection|ProductVariantInterface[]
+     *
+     * @psalm-var Collection<array-key, ProductVariantInterface>
+     */
     protected $productVariants;
 
     public function __construct()
     {
+        /** @var ArrayCollection<array-key, ProductVariantInterface> $this->productVaraints */
         $this->productVariants = new ArrayCollection();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasProductVariants(): bool
     {
         return !$this->productVariants->isEmpty();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getProductVariants(): Collection
     {
         return $this->productVariants;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasProductVariant(ProductVariantInterface $productVariant): bool
     {
         return $this->productVariants->contains($productVariant);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addProductVariant(ProductVariantInterface $productVariant): void
     {
         $this->productVariants->add($productVariant);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function removeProductVariant(ProductVariantInterface $productVariant): void
     {
         if ($this->hasProductVariant($productVariant)) {

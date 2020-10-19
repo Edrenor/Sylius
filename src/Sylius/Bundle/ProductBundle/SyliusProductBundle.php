@@ -18,9 +18,6 @@ use Sylius\Bundle\ResourceBundle\SyliusResourceBundle;
 
 final class SyliusProductBundle extends AbstractResourceBundle
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getSupportedDrivers(): array
     {
         return [
@@ -29,7 +26,7 @@ final class SyliusProductBundle extends AbstractResourceBundle
     }
 
     /**
-     * {@inheritdoc}
+     * @psalm-suppress MismatchingDocblockReturnType https://github.com/vimeo/psalm/issues/2345
      */
     protected function getModelNamespace(): string
     {

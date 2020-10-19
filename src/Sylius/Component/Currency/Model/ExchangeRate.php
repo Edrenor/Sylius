@@ -36,26 +36,23 @@ class ExchangeRate implements ExchangeRateInterface
         $this->createdAt = new \DateTime();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getId()
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRatio(): ?float
     {
-        // It looks like Doctrine is hydrating decimal field as string, force casting to float.
+        /**
+         * It looks like Doctrine is hydrating decimal field as string, force casting to float.
+         *
+         * @psalm-suppress DocblockTypeContradiction
+         * @psalm-suppress RedundantConditionGivenDocblockType
+         */
         return is_string($this->ratio) ? (float) $this->ratio : $this->ratio;
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @throws \InvalidArgumentException
      */
     public function setRatio(?float $ratio): void
@@ -63,33 +60,21 @@ class ExchangeRate implements ExchangeRateInterface
         $this->ratio = $ratio;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSourceCurrency(): ?CurrencyInterface
     {
         return $this->sourceCurrency;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setSourceCurrency(CurrencyInterface $currency): void
     {
         $this->sourceCurrency = $currency;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTargetCurrency(): ?CurrencyInterface
     {
         return $this->targetCurrency;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setTargetCurrency(CurrencyInterface $currency): void
     {
         $this->targetCurrency = $currency;

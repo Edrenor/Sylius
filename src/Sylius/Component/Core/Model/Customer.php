@@ -21,45 +21,47 @@ use Webmozart\Assert\Assert;
 
 class Customer extends BaseCustomer implements CustomerInterface
 {
-    /** @var Collection|OrderInterface[] */
+    /**
+     * @var Collection|OrderInterface[]
+     *
+     * @psalm-var Collection<array-key, OrderInterface>
+     */
     protected $orders;
 
-    /** @var AddressInterface */
+    /** @var AddressInterface|null */
     protected $defaultAddress;
 
-    /** @var Collection|AddressInterface[] */
+    /**
+     * @var Collection|AddressInterface[]
+     *
+     * @psalm-var Collection<array-key, AddressInterface>
+     */
     protected $addresses;
 
-    /** @var ShopUserInterface */
+    /** @var ShopUserInterface|null */
     protected $user;
 
     public function __construct()
     {
         parent::__construct();
 
+        /** @var ArrayCollection<array-key, OrderInterface> $this->orders */
         $this->orders = new ArrayCollection();
+
+        /** @var ArrayCollection<array-key, AddressInterface> $this->addresses */
         $this->addresses = new ArrayCollection();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getOrders(): Collection
     {
         return $this->orders;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDefaultAddress(): ?AddressInterface
     {
         return $this->defaultAddress;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDefaultAddress(?AddressInterface $defaultAddress): void
     {
         $this->defaultAddress = $defaultAddress;
@@ -69,9 +71,6 @@ class Customer extends BaseCustomer implements CustomerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addAddress(AddressInterface $address): void
     {
         if (!$this->hasAddress($address)) {
@@ -80,42 +79,27 @@ class Customer extends BaseCustomer implements CustomerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function removeAddress(AddressInterface $address): void
     {
         $this->addresses->removeElement($address);
         $address->setCustomer(null);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasAddress(AddressInterface $address): bool
     {
         return $this->addresses->contains($address);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAddresses(): Collection
     {
         return $this->addresses;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getUser(): ?BaseUserInterface
     {
         return $this->user;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setUser(?BaseUserInterface $user): void
     {
         if ($this->user === $user) {
@@ -128,6 +112,7 @@ class Customer extends BaseCustomer implements CustomerInterface
         $previousUser = $this->user;
         $this->user = $user;
 
+        /** @psalm-suppress RedundantConditionGivenDocblockType */
         if ($previousUser instanceof ShopUserInterface) {
             $previousUser->setCustomer(null);
         }
@@ -137,9 +122,6 @@ class Customer extends BaseCustomer implements CustomerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasUser(): bool
     {
         return null !== $this->user;

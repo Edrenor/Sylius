@@ -1,0 +1,284 @@
+<?xml version="1.0" ?>
+
+<!--
+
+ This file is part of the Sylius package.
+
+ (c) Paweł Jędrzejewski
+
+ For the full copyright and license information, please view the LICENSE
+ file that was distributed with this source code.
+
+-->
+
+<resources xmlns="https://api-platform.com/schema/metadata"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="https://api-platform.com/schema/metadata https://api-platform.com/schema/metadata/metadata-2.0.xsd"
+>
+    <resource class="%sylius.model.order.class%" shortName="Order">
+        <attribute name="normalization_context">
+            <attribute name="groups">
+                <attribute>order:read</attribute>
+            </attribute>
+        </attribute>
+
+        <attribute name="validation_groups">sylius</attribute>
+
+        <collectionOperations>
+            <collectionOperation name="admin_get">
+                <attribute name="method">GET</attribute>
+                <attribute name="path">admin/orders</attribute>
+            </collectionOperation>
+
+            <collectionOperation name="shop_post">
+                <attribute name="method">POST</attribute>
+                <attribute name="path">/shop/orders</attribute>
+                <attribute name="messenger">input</attribute>
+                <attribute name="input">Sylius\Bundle\ApiBundle\Command\Cart\PickupCart</attribute>
+                <attribute name="denormalization_context">
+                    <attribute name="groups">order:create</attribute>
+                </attribute>
+                <attribute name="openapi_context">
+                    <attribute name="summary">Pickups a new cart</attribute>
+                </attribute>
+            </collectionOperation>
+        </collectionOperations>
+
+        <itemOperations>
+            <itemOperation name="admin_get">
+                <attribute name="method">GET</attribute>
+                <attribute name="path">/admin/orders/{id}</attribute>
+            </itemOperation>
+
+            <itemOperation name="shop_get">
+                <attribute name="method">GET</attribute>
+                <attribute name="path">/shop/orders/{id}</attribute>
+            </itemOperation>
+
+            <itemOperation name="shop_delete">
+                <attribute name="method">DELETE</attribute>
+                <attribute name="path">/shop/orders/{id}</attribute>
+                <attribute name="openapi_context">
+                    <attribute name="summary">Deletes cart</attribute>
+                </attribute>
+            </itemOperation>
+
+            <itemOperation name="admin_cancel">
+                <attribute name="method">PATCH</attribute>
+                <attribute name="path">/admin/orders/{id}/cancel</attribute>
+                <attribute name="input">false</attribute>
+                <attribute name="controller">sylius.api.order_state_machine_transition_applicator:cancel</attribute>
+                <attribute name="denormalization_context">
+                    <attribute name="groups">order:update</attribute>
+                </attribute>
+                <attribute name="openapi_context">
+                    <attribute name="summary">Cancels Order</attribute>
+                </attribute>
+            </itemOperation>
+
+            <itemOperation name="shop_add_item">
+                <attribute name="method">PATCH</attribute>
+                <attribute name="path">/shop/orders/{id}/items</attribute>
+                <attribute name="messenger">input</attribute>
+                <attribute name="input">Sylius\Bundle\ApiBundle\Command\Cart\AddItemToCart</attribute>
+                <attribute name="denormalization_context">
+                    <attribute name="groups">cart:add_item</attribute>
+                </attribute>
+                <attribute name="openapi_context">
+                    <attribute name="summary">Adds Item to cart</attribute>
+                </attribute>
+            </itemOperation>
+
+            <itemOperation name="shop_address">
+                <attribute name="method">PATCH</attribute>
+                <attribute name="path">/shop/orders/{id}/address</attribute>
+                <attribute name="messenger">input</attribute>
+                <attribute name="input">Sylius\Bundle\ApiBundle\Command\Checkout\AddressOrder</attribute>
+                <attribute name="denormalization_context">
+                    <attribute name="groups">cart:address</attribute>
+                </attribute>
+                <attribute name="normalization_context">
+                    <attribute name="groups">checkout:read</attribute>
+                </attribute>
+                <attribute name="openapi_context">
+                    <attribute name="summary">Addresses cart to given location, logged in Customer does not have to provide an email</attribute>
+                </attribute>
+            </itemOperation>
+
+            <itemOperation name="shop_select_shipping_method">
+                <attribute name="method">PATCH</attribute>
+                <attribute name="path">/shop/orders/{id}/shipments/{shipmentId}</attribute>
+                <attribute name="messenger">input</attribute>
+                <attribute name="input">Sylius\Bundle\ApiBundle\Command\Checkout\ChooseShippingMethod</attribute>
+                <attribute name="denormalization_context">
+                    <attribute name="groups">cart:select_shipping_method</attribute>
+                </attribute>
+                <attribute name="normalization_context">
+                    <attribute name="groups">checkout:read</attribute>
+                </attribute>
+                <attribute name="openapi_context">
+                    <attribute name="summary">Selects shipping methods for particular shipment</attribute>
+                    <attribute name="parameters">
+                        <attribute>
+                            <attribute name="name">id</attribute>
+                            <attribute name="in">path</attribute>
+                            <attribute name="required">true</attribute>
+                            <attribute name="schema">
+                                <attribute name="type">string</attribute>
+                            </attribute>
+                        </attribute>
+                        <attribute>
+                            <attribute name="name">shipmentId</attribute>
+                            <attribute name="in">path</attribute>
+                            <attribute name="required">true</attribute>
+                            <attribute name="schema">
+                                <attribute name="type">string</attribute>
+                            </attribute>
+                        </attribute>
+                    </attribute>
+                </attribute>
+            </itemOperation>
+
+            <itemOperation name="shop_select_payment_method">
+                <attribute name="method">PATCH</attribute>
+                <attribute name="path">/shop/orders/{id}/payments/{paymentId}</attribute>
+                <attribute name="messenger">input</attribute>
+                <attribute name="input">Sylius\Bundle\ApiBundle\Command\Checkout\ChoosePaymentMethod</attribute>
+                <attribute name="denormalization_context">
+                    <attribute name="groups">cart:select_payment_method</attribute>
+                </attribute>
+                <attribute name="normalization_context">
+                    <attribute name="groups">checkout:read</attribute>
+                </attribute>
+                <attribute name="openapi_context">
+                    <attribute name="summary">Selects payment methods for particular payment</attribute>
+                    <attribute name="parameters">
+                        <attribute>
+                            <attribute name="name">id</attribute>
+                            <attribute name="in">path</attribute>
+                            <attribute name="required">true</attribute>
+                            <attribute name="schema">
+                                <attribute name="type">string</attribute>
+                            </attribute>
+                        </attribute>
+                        <attribute>
+                            <attribute name="name">paymentId</attribute>
+                            <attribute name="in">path</attribute>
+                            <attribute name="required">true</attribute>
+                            <attribute name="schema">
+                                <attribute name="type">string</attribute>
+                            </attribute>
+                        </attribute>
+                    </attribute>
+                </attribute>
+            </itemOperation>
+
+            <itemOperation name="shop_complete">
+                <attribute name="method">PATCH</attribute>
+                <attribute name="path">/shop/orders/{id}/complete</attribute>
+                <attribute name="validation_groups">
+                    <attribute>sylius</attribute>
+                    <attribute>sylius_checkout_complete</attribute>
+                </attribute>
+                <attribute name="messenger">input</attribute>
+                <attribute name="input">Sylius\Bundle\ApiBundle\Command\Checkout\CompleteOrder</attribute>
+                <attribute name="denormalization_context">
+                    <attribute name="groups">cart:complete</attribute>
+                </attribute>
+                <attribute name="normalization_context">
+                    <attribute name="groups">checkout:read</attribute>
+                </attribute>
+                <attribute name="openapi_context">
+                    <attribute name="summary">Completes checkout</attribute>
+                </attribute>
+            </itemOperation>
+
+            <itemOperation name="shop_remove_item">
+                <attribute name="method">PATCH</attribute>
+                <attribute name="path">/shop/orders/{id}/remove</attribute>
+                <attribute name="messenger">input</attribute>
+                <attribute name="input">Sylius\Bundle\ApiBundle\Command\Cart\RemoveItemFromCart</attribute>
+                <attribute name="denormalization_context">
+                    <attribute name="groups">cart:remove_item</attribute>
+                </attribute>
+                <attribute name="openapi_context">
+                    <attribute name="summary">Removes Item</attribute>
+                </attribute>
+            </itemOperation>
+
+            <itemOperation name="shop_change_quantity">
+                <attribute name="method">PATCH</attribute>
+                <attribute name="path">/shop/orders/{id}/change-quantity</attribute>
+                <attribute name="messenger">input</attribute>
+                <attribute name="input">Sylius\Bundle\ApiBundle\Command\Cart\ChangeItemQuantityInCart</attribute>
+                <attribute name="denormalization_context">
+                    <attribute name="groups">cart:change_quantity</attribute>
+                </attribute>
+                <attribute name="openapi_context">
+                    <attribute name="summary">Changes quantity of order item</attribute>
+                </attribute>
+            </itemOperation>
+        </itemOperations>
+
+        <subresourceOperations>
+            <subresourceOperation name="items_get_subresource">
+                <attribute name="method">GET</attribute>
+                <attribute name="path">/shop/orders/{id}/items</attribute>
+            </subresourceOperation>
+
+            <subresourceOperation name="shipments_get_subresource">
+                <attribute name="method">GET</attribute>
+                <attribute name="path">/admin/orders/{id}/shipments</attribute>
+            </subresourceOperation>
+
+            <subresourceOperation name="payments_get_subresource">
+                <attribute name="method">GET</attribute>
+                <attribute name="path">/admin/orders/{id}/payments</attribute>
+            </subresourceOperation>
+
+            <subresourceOperation name="adjustments_get_subresource">
+                <attribute name="method">GET</attribute>
+                <attribute name="path">/shop/orders/{id}/adjustments</attribute>
+            </subresourceOperation>
+
+            <subresourceOperation name="payments_methods_get_subresource">
+                <attribute name="method">GET</attribute>
+                <attribute name="path">/shop/orders/{id}/payments/{payments}/methods</attribute>
+            </subresourceOperation>
+
+            <subresourceOperation name="shipments_methods_get_subresource">
+                <attribute name="method">GET</attribute>
+                <attribute name="path">/shop/orders/{id}/shipments/{shipments}/methods</attribute>
+            </subresourceOperation>
+
+            <subresourceOperation name="items_adjustments_get_subresource">
+                <attribute name="method">GET</attribute>
+                <attribute name="path">/shop/orders/{id}/items/{items}/adjustments</attribute>
+            </subresourceOperation>
+        </subresourceOperations>
+
+        <property name="id" identifier="false" writable="false" />
+        <property name="number" identifier="false" writable="false" />
+        <property name="tokenValue" identifier="true" writable="false" />
+        <property name="channel" writable="false" />
+        <property name="customer" writable="false" />
+        <property name="shipments" writable="false">
+            <subresource resourceClass="%sylius.model.shipment.class%" />
+        </property>
+        <property name="payments" writable="false">
+            <subresource resourceClass="%sylius.model.payment.class%" />
+        </property>
+        <property name="state" writable="false" />
+        <property name="paymentState" writable="false" />
+        <property name="total" writable="false" />
+        <property name="orderPromotionTotal" writable="false" />
+        <property name="items" readable="true" writable="true">
+            <subresource resourceClass="%sylius.model.order_item.class%" />
+        </property>
+        <property name="notes" writable="true" />
+        <property name="taxTotal" readable="true"/>
+        <property name="adjustments" writable="false">
+            <subresource resourceClass="%sylius.model.adjustment.class%" />
+        </property>
+    </resource>
+</resources>

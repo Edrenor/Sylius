@@ -31,23 +31,22 @@ final class SelectAttributeType extends AbstractType
         $this->defaultLocaleCode = $localeProvider->getDefaultLocaleCode();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParent(): string
     {
         return ChoiceType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (is_array($options['configuration'])
             && isset($options['configuration']['multiple'])
             && !$options['configuration']['multiple']) {
             $builder->addModelTransformer(new CallbackTransformer(
+                /**
+                 * @param mixed $array
+                 *
+                 * @return mixed
+                 */
                 function ($array) {
                     if (is_array($array) && count($array) > 0) {
                         return $array[0];
@@ -55,7 +54,8 @@ final class SelectAttributeType extends AbstractType
 
                     return null;
                 },
-                function ($string) {
+                /** @param mixed $string */
+                function ($string): array {
                     if (null !== $string) {
                         return [$string];
                     }
@@ -66,9 +66,6 @@ final class SelectAttributeType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
@@ -89,6 +86,10 @@ final class SelectAttributeType extends AbstractType
                             continue;
                         }
 
+                        if (false === isset($choice[$this->defaultLocaleCode]) || '' === $choice[$this->defaultLocaleCode]) {
+                            continue;
+                        }
+
                         $choices[$key] = $choice[$this->defaultLocaleCode];
                     }
 
@@ -100,7 +101,7 @@ final class SelectAttributeType extends AbstractType
 
                 return [];
             })
-            ->setNormalizer('multiple', function (Options $options) {
+            ->setNormalizer('multiple', function (Options $options): bool {
                 if (is_array($options['configuration']) && isset($options['configuration']['multiple'])) {
                     return $options['configuration']['multiple'];
                 }
@@ -110,9 +111,6 @@ final class SelectAttributeType extends AbstractType
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'sylius_attribute_type_select';

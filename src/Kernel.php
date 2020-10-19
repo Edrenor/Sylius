@@ -52,6 +52,7 @@ class Kernel extends BaseKernel
 
     public function registerBundles(): iterable
     {
+        /** @psalm-suppress UnresolvableInclude */
         $contents = require $this->getProjectDir() . '/config/bundles.php';
         foreach ($contents as $class => $envs) {
             if (isset($envs['all']) || isset($envs[$this->environment])) {
@@ -60,10 +61,10 @@ class Kernel extends BaseKernel
         }
     }
 
-    protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader): void
+    protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader): void
     {
-        $container->addResource(new FileResource($this->getProjectDir() . '/config/bundles.php'));
-        $container->setParameter('container.dumper.inline_class_loader', true);
+        $c->addResource(new FileResource($this->getProjectDir() . '/config/bundles.php'));
+        $c->setParameter('container.dumper.inline_class_loader', true);
         $confDir = $this->getProjectDir() . '/config';
 
         $loader->load($confDir . '/{packages}/*' . self::CONFIG_EXTS, 'glob');

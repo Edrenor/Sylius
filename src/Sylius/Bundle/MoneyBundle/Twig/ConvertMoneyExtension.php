@@ -14,8 +14,10 @@ declare(strict_types=1);
 namespace Sylius\Bundle\MoneyBundle\Twig;
 
 use Sylius\Bundle\MoneyBundle\Templating\Helper\ConvertMoneyHelperInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 
-final class ConvertMoneyExtension extends \Twig_Extension
+final class ConvertMoneyExtension extends AbstractExtension
 {
     /** @var ConvertMoneyHelperInterface */
     private $helper;
@@ -25,13 +27,10 @@ final class ConvertMoneyExtension extends \Twig_Extension
         $this->helper = $helper;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFilters(): array
     {
         return [
-            new \Twig_Filter('sylius_convert_money', [$this->helper, 'convertAmount']),
+            new TwigFilter('sylius_convert_money', [$this->helper, 'convertAmount']),
         ];
     }
 }

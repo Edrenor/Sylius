@@ -20,13 +20,11 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class InstallDatabaseCommand extends AbstractInstallCommand
 {
-    /**
-     * {@inheritdoc}
-     */
+    protected static $defaultName = 'sylius:install:database';
+
     protected function configure(): void
     {
         $this
-            ->setName('sylius:install:database')
             ->setDescription('Install Sylius database.')
             ->setHelp(<<<EOT
 The <info>%command.name%</info> command creates Sylius database.
@@ -36,10 +34,7 @@ EOT
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $suite = $input->getOption('fixture-suite');
 
@@ -63,5 +58,7 @@ EOT
             $parameters['--fixture-suite'] = $suite;
         }
         $this->commandExecutor->runCommand('sylius:install:sample-data', $parameters, $output);
+
+        return 0;
     }
 }

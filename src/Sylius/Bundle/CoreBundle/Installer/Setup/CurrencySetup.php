@@ -20,7 +20,8 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Intl\Intl;
+use Symfony\Component\Intl\Currencies;
+use Symfony\Component\Intl\Exception\MissingResourceException;
 
 final class CurrencySetup implements CurrencySetupInterface
 {
@@ -30,20 +31,21 @@ final class CurrencySetup implements CurrencySetupInterface
     /** @var FactoryInterface */
     private $currencyFactory;
 
-    public function __construct(RepositoryInterface $currencyRepository, FactoryInterface $currencyFactory)
+    /** @var string */
+    private $currency;
+
+    public function __construct(RepositoryInterface $currencyRepository, FactoryInterface $currencyFactory, string $currency = 'USD')
     {
         $this->currencyRepository = $currencyRepository;
         $this->currencyFactory = $currencyFactory;
+        $this->currency = trim($currency);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setup(InputInterface $input, OutputInterface $output, QuestionHelper $questionHelper): CurrencyInterface
     {
         $code = $this->getCurrencyCodeFromUser($input, $output, $questionHelper);
 
-        /** @var CurrencyInterface $existingCurrency */
+        /** @var CurrencyInterface|null $existingCurrency */
         $existingCurrency = $this->currencyRepository->findOneBy(['code' => $code]);
         if (null !== $existingCurrency) {
             return $existingCurrency;
@@ -79,13 +81,17 @@ final class CurrencySetup implements CurrencySetupInterface
 
     private function getNewCurrencyCode(InputInterface $input, OutputInterface $output, QuestionHelper $questionHelper): string
     {
-        $question = new Question('Currency (press enter to use USD): ', 'USD');
+        $question = new Question(sprintf('Currency (press enter to use %s): ', $this->currency), $this->currency);
 
         return trim($questionHelper->ask($input, $output, $question));
     }
 
     private function getCurrencyName(string $code): ?string
     {
-        return Intl::getCurrencyBundle()->getCurrencyName($code);
+        try {
+            return Currencies::getName($code);
+        } catch (MissingResourceException $exception) {
+            return null;
+        }
     }
 }

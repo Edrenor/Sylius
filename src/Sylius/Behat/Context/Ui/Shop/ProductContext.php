@@ -15,12 +15,13 @@ namespace Sylius\Behat\Context\Ui\Shop;
 
 use Behat\Behat\Context\Context;
 use Behat\Mink\Element\NodeElement;
+use Sylius\Behat\Element\Product\IndexPage\VerticalMenuElementInterface;
 use Sylius\Behat\Page\ErrorPageInterface;
 use Sylius\Behat\Page\Shop\Product\IndexPageInterface;
 use Sylius\Behat\Page\Shop\Product\ShowPageInterface;
 use Sylius\Behat\Page\Shop\ProductReview\IndexPageInterface as ProductReviewIndexPageInterface;
-use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\ProductInterface;
+use Sylius\Component\Core\Model\ProductVariantInterface;
 use Sylius\Component\Core\Model\TaxonInterface;
 use Webmozart\Assert\Assert;
 
@@ -38,16 +39,21 @@ final class ProductContext implements Context
     /** @var ErrorPageInterface */
     private $errorPage;
 
+    /** @var VerticalMenuElementInterface */
+    private $verticalMenuElement;
+
     public function __construct(
         ShowPageInterface $showPage,
         IndexPageInterface $indexPage,
         ProductReviewIndexPageInterface $productReviewsIndexPage,
-        ErrorPageInterface $errorPage
+        ErrorPageInterface $errorPage,
+        VerticalMenuElementInterface $verticalMenuElement
     ) {
         $this->showPage = $showPage;
         $this->indexPage = $indexPage;
         $this->productReviewsIndexPage = $productReviewsIndexPage;
         $this->errorPage = $errorPage;
+        $this->verticalMenuElement = $verticalMenuElement;
     }
 
     /**
@@ -295,10 +301,29 @@ final class ProductContext implements Context
     /**
      * @Then the product price should be :price
      * @Then I should see the product price :price
+     * @Then I should see that the combination is :price
      */
     public function iShouldSeeTheProductPrice($price)
     {
         Assert::same($this->showPage->getPrice(), $price);
+    }
+
+    /**
+     * @Then the product original price should be :price
+     * @Then I should see the product original price :price
+     */
+    public function iShouldSeeTheProductOriginalPrice($price)
+    {
+        Assert::true($this->showPage->isOriginalPriceVisible());
+        Assert::same($this->showPage->getOriginalPrice(), $price);
+    }
+
+    /**
+     * @Then I should not see any original price
+     */
+    public function iShouldNotSeeTheProductOriginalPrice(): void
+    {
+        Assert::false($this->showPage->isOriginalPriceVisible());
     }
 
     /**
@@ -524,6 +549,87 @@ final class ProductContext implements Context
     public function iShouldBeInformedThatTheProductDoesNotExist()
     {
         Assert::eq($this->errorPage->getTitle(), 'The "product" has not been found');
+    }
+
+    /**
+     * @Then /^I should be able to select between (\d+) variants$/
+     */
+    public function iShouldBeAbleToSelectBetweenVariants(int $count)
+    {
+        Assert::count($this->showPage->getVariantsNames(), $count);
+    }
+
+    /**
+     * @Then /^I should not be able to select the ("([^"]*)" variant)$/
+     */
+    public function iShouldNotBeAbleToSelectTheVariant(ProductVariantInterface $productVariant)
+    {
+        Assert::true(!in_array($productVariant->getName(), $this->showPage->getVariantsNames(), true));
+    }
+
+    /**
+     * @Then /^I should not be able to select the "([^"]*)" ([^\s]+) option value$/
+     */
+    public function iShouldNotBeAbleToSelectTheOptionValue(string $optionValue, string $optionName)
+    {
+        Assert::false(in_array($optionValue, $this->showPage->getOptionValues($optionName), true));
+    }
+
+    /**
+     * @Then /^I should be able to select the "([^"]*)" and "([^"]*)" ([^\s]+) option values$/
+     */
+    public function iShouldBeAbleToSelectTheAndColorOptionValues(
+        string $optionValue1,
+        string $optionValue2,
+        string $optionName
+    ) {
+        Assert::true(in_array($optionValue1, $this->showPage->getOptionValues($optionName), true));
+        Assert::true(in_array($optionValue2, $this->showPage->getOptionValues($optionName), true));
+    }
+
+    /**
+     * @When /^I try to browse products from (taxon "([^"]+)")$/
+     */
+    public function iTryToBrowseProductsFrom(TaxonInterface $taxon): void
+    {
+        $this->indexPage->tryToOpen(['slug' => $taxon->getSlug()]);
+    }
+
+    /**
+     * @Then I should be informed that the taxon does not exist
+     */
+    public function iShouldBeInformedThatTheTaxonDoesNotExist(): void
+    {
+        Assert::same($this->errorPage->getTitle(), 'Requested page is invalid.');
+    }
+
+    /**
+     * @Then I should see :firstMenuItem and :secondMenuItem in the vertical menu
+     */
+    public function iShouldSeeInTheVerticalMenu(string ...$menuItems): void
+    {
+        Assert::allOneOf($menuItems, $this->verticalMenuElement->getMenuItems());
+    }
+
+    /**
+     * @Then I should not see :firstMenuItem in the vertical menu
+     */
+    public function iShouldNotSeeInTheVerticalMenu(string ...$menuItems): void
+    {
+        $actualMenuItems = $this->verticalMenuElement->getMenuItems();
+        foreach ($menuItems as $menuItem) {
+            if (in_array($menuItem, $actualMenuItems)) {
+                throw new \InvalidArgumentException(sprintf('Vertical menu should not contain %s element', $menuItem));
+            }
+        }
+    }
+
+    /**
+     * @Then I should not be able to navigate to parent taxon
+     */
+    public function iShouldNotBeAbleToNavigateToParentTaxon(): void
+    {
+        Assert::false($this->verticalMenuElement->canNavigateToParentTaxon());
     }
 
     /**

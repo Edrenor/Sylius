@@ -20,10 +20,10 @@ class ShippingMethodTranslation extends AbstractTranslation implements ShippingM
     /** @var mixed */
     protected $id;
 
-    /** @var string */
+    /** @var string|null */
     protected $name;
 
-    /** @var string */
+    /** @var string|null */
     protected $description;
 
     public function __toString(): string
@@ -31,41 +31,26 @@ class ShippingMethodTranslation extends AbstractTranslation implements ShippingM
         return (string) $this->getName();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getId()
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setName(?string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDescription(?string $description): void
     {
         $this->description = $description;

@@ -11,11 +11,12 @@ Feature: Selecting an order payment method
         And the store allows paying with "Paypal Express Checkout"
         And I am a logged in customer
 
-    @ui
+    @ui @api
     Scenario: Selecting a payment method
         Given I have product "PHP T-Shirt" in the cart
-        And I specified the shipping address as "Ankh Morpork", "Frost Alley", "90210", "United States" for "Jon Snow"
+        And I specified the billing address as "Ankh Morpork", "Frost Alley", "90210", "United States" for "Jon Snow"
         And I select "Free" shipping method
         And I complete the shipping step
         When I select "Paypal Express Checkout" payment method
         And I complete the payment step
+        Then I should be on the checkout complete step

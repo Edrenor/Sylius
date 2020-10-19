@@ -21,9 +21,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class TaxonAutocompleteChoiceType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -34,7 +31,7 @@ final class TaxonAutocompleteChoiceType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * @psalm-suppress MissingPropertyType
      */
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
@@ -42,17 +39,11 @@ final class TaxonAutocompleteChoiceType extends AbstractType
         $view->vars['remote_criteria_name'] = 'phrase';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'sylius_taxon_autocomplete_choice';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParent(): string
     {
         return ResourceAutocompleteChoiceType::class;

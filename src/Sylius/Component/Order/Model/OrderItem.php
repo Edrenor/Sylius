@@ -36,13 +36,21 @@ class OrderItem implements OrderItemInterface
     /** @var bool */
     protected $immutable = false;
 
-    /** @var Collection|OrderItemUnitInterface[] */
+    /**
+     * @var Collection|OrderItemUnitInterface[]
+     *
+     * @psalm-var Collection<array-key, OrderItemUnitInterface>
+     */
     protected $units;
 
     /** @var int */
     protected $unitsTotal = 0;
 
-    /** @var Collection|AdjustmentInterface[] */
+    /**
+     * @var Collection|AdjustmentInterface[]
+     *
+     * @psalm-var Collection<array-key, AdjustmentInterface>
+     */
     protected $adjustments;
 
     /** @var int */
@@ -50,37 +58,28 @@ class OrderItem implements OrderItemInterface
 
     public function __construct()
     {
+        /** @var ArrayCollection<array-key, AdjustmentInterface> $this->adjustments */
         $this->adjustments = new ArrayCollection();
+
+        /** @var ArrayCollection<array-key, OrderItemUnitInterface> $this->units */
         $this->units = new ArrayCollection();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getId()
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getQuantity(): int
     {
         return $this->quantity;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getOrder(): ?OrderInterface
     {
         return $this->order;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setOrder(?OrderInterface $order): void
     {
         $currentOrder = $this->getOrder();
@@ -105,34 +104,22 @@ class OrderItem implements OrderItemInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getUnitPrice(): int
     {
         return $this->unitPrice;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setUnitPrice(int $unitPrice): void
     {
         $this->unitPrice = $unitPrice;
         $this->recalculateUnitsTotal();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTotal(): int
     {
         return $this->total;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function recalculateAdjustmentsTotal(): void
     {
         $this->adjustmentsTotal = 0;
@@ -146,9 +133,6 @@ class OrderItem implements OrderItemInterface
         $this->recalculateTotal();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function recalculateUnitsTotal(): void
     {
         $this->unitsTotal = 0;
@@ -160,41 +144,26 @@ class OrderItem implements OrderItemInterface
         $this->recalculateTotal();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function equals(OrderItemInterface $orderItem): bool
     {
         return $this === $orderItem;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isImmutable(): bool
     {
         return $this->immutable;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setImmutable(bool $immutable): void
     {
         $this->immutable = $immutable;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getUnits(): Collection
     {
         return $this->units;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addUnit(OrderItemUnitInterface $unit): void
     {
         if ($this !== $unit->getOrderItem()) {
@@ -210,9 +179,6 @@ class OrderItem implements OrderItemInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function removeUnit(OrderItemUnitInterface $unit): void
     {
         if ($this->hasUnit($unit)) {
@@ -224,31 +190,22 @@ class OrderItem implements OrderItemInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasUnit(OrderItemUnitInterface $unit): bool
     {
         return $this->units->contains($unit);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAdjustments(?string $type = null): Collection
     {
         if (null === $type) {
             return $this->adjustments;
         }
 
-        return $this->adjustments->filter(function (AdjustmentInterface $adjustment) use ($type) {
+        return $this->adjustments->filter(static function (AdjustmentInterface $adjustment) use ($type) {
             return $type === $adjustment->getType();
         });
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAdjustmentsRecursively(?string $type = null): Collection
     {
         $adjustments = clone $this->getAdjustments($type);
@@ -262,9 +219,6 @@ class OrderItem implements OrderItemInterface
         return $adjustments;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addAdjustment(AdjustmentInterface $adjustment): void
     {
         if (!$this->hasAdjustment($adjustment)) {
@@ -274,9 +228,6 @@ class OrderItem implements OrderItemInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function removeAdjustment(AdjustmentInterface $adjustment): void
     {
         if (!$adjustment->isLocked() && $this->hasAdjustment($adjustment)) {
@@ -286,17 +237,11 @@ class OrderItem implements OrderItemInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasAdjustment(AdjustmentInterface $adjustment): bool
     {
         return $this->adjustments->contains($adjustment);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAdjustmentsTotal(?string $type = null): int
     {
         if (null === $type) {
@@ -313,9 +258,6 @@ class OrderItem implements OrderItemInterface
         return $total;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAdjustmentsTotalRecursively(?string $type = null): int
     {
         $total = 0;
@@ -329,9 +271,6 @@ class OrderItem implements OrderItemInterface
         return $total;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function removeAdjustments(?string $type = null): void
     {
         foreach ($this->getAdjustments($type) as $adjustment) {
@@ -339,9 +278,6 @@ class OrderItem implements OrderItemInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function removeAdjustmentsRecursively(?string $type = null): void
     {
         $this->removeAdjustments($type);

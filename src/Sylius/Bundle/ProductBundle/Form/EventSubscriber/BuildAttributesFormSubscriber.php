@@ -40,9 +40,6 @@ final class BuildAttributesFormSubscriber implements EventSubscriberInterface
         $this->localeProvider = $localeProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [
@@ -56,9 +53,9 @@ final class BuildAttributesFormSubscriber implements EventSubscriberInterface
      */
     public function preSetData(FormEvent $event): void
     {
-        /** @var ProductInterface $product */
         $product = $event->getData();
 
+        /** @var ProductInterface $product */
         Assert::isInstanceOf($product, ProductInterface::class);
 
         $defaultLocaleCode = $this->localeProvider->getDefaultLocaleCode();
@@ -79,9 +76,9 @@ final class BuildAttributesFormSubscriber implements EventSubscriberInterface
      */
     public function postSubmit(FormEvent $event): void
     {
-        /** @var ProductInterface $product */
         $product = $event->getData();
 
+        /** @var ProductInterface $product */
         Assert::isInstanceOf($product, ProductInterface::class);
 
         /** @var AttributeValueInterface $attribute */

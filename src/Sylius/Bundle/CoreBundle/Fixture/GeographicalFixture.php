@@ -21,7 +21,7 @@ use Sylius\Component\Addressing\Model\ProvinceInterface;
 use Sylius\Component\Addressing\Model\ZoneInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
-use Symfony\Component\Intl\Intl;
+use Symfony\Component\Intl\Countries;
 use Webmozart\Assert\Assert;
 
 class GeographicalFixture extends AbstractFixture
@@ -60,9 +60,6 @@ class GeographicalFixture extends AbstractFixture
         $this->zoneManager = $zoneManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function load(array $options): void
     {
         $this->loadCountriesWithProvinces($options['countries'], $options['provinces']);
@@ -73,17 +70,11 @@ class GeographicalFixture extends AbstractFixture
         $this->zoneManager->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName(): string
     {
         return 'geographical';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configureOptionsNode(ArrayNodeDefinition $optionsNode): void
     {
         $optionsNodeBuilder = $optionsNode->children();
@@ -91,7 +82,7 @@ class GeographicalFixture extends AbstractFixture
         $optionsNodeBuilder
             ->arrayNode('countries')
                 ->performNoDeepMerging()
-                ->defaultValue(array_keys(Intl::getRegionBundle()->getCountryNames()))
+                ->defaultValue(array_keys(Countries::getNames()))
                 ->scalarPrototype()
         ;
 
@@ -130,7 +121,7 @@ class GeographicalFixture extends AbstractFixture
 
         $zoneNode
             ->validate()
-                ->ifTrue(function ($zone) {
+                ->ifTrue(function (array $zone): bool {
                     $filledTypes = 0;
                     $filledTypes += empty($zone['countries']) ? 0 : 1;
                     $filledTypes += empty($zone['zones']) ? 0 : 1;
@@ -248,7 +239,7 @@ class GeographicalFixture extends AbstractFixture
     private function provideZoneValidator(array $options): \Closure
     {
         $memberValidators = [
-            ZoneInterface::TYPE_COUNTRY => function ($countryCode) use ($options) {
+            ZoneInterface::TYPE_COUNTRY => function (string $countryCode) use ($options): void {
                 if (in_array($countryCode, $options['countries'], true)) {
                     return;
                 }
@@ -259,7 +250,7 @@ class GeographicalFixture extends AbstractFixture
                     implode(', ', $options['countries'])
                 ));
             },
-            ZoneInterface::TYPE_PROVINCE => function ($provinceCode) use ($options) {
+            ZoneInterface::TYPE_PROVINCE => function (string $provinceCode) use ($options): void {
                 $foundProvinces = [];
                 foreach ($options['provinces'] as $provinces) {
                     if (isset($provinces[$provinceCode])) {
@@ -272,10 +263,10 @@ class GeographicalFixture extends AbstractFixture
                 throw new \InvalidArgumentException(sprintf(
                     'Could not find province "%s", defined ones are: %s!',
                     $provinceCode,
-                    implode(', ', $options['countries'])
+                    implode(', ', $options['provinces'])
                 ));
             },
-            ZoneInterface::TYPE_ZONE => function ($zoneCode) use ($options) {
+            ZoneInterface::TYPE_ZONE => function (string $zoneCode) use ($options): void {
                 if (isset($options['zones'][$zoneCode])) {
                     return;
                 }
@@ -288,7 +279,7 @@ class GeographicalFixture extends AbstractFixture
             },
         ];
 
-        return function (array $zoneOptions) use ($memberValidators) {
+        return function (array $zoneOptions) use ($memberValidators): void {
             $zoneType = $this->getZoneType($zoneOptions);
             $zoneMembers = $this->getZoneMembers($zoneOptions);
 

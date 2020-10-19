@@ -21,9 +21,6 @@ class SharedStorage implements SharedStorageInterface
     /** @var string|null */
     private $latestKey;
 
-    /**
-     * {@inheritdoc}
-     */
     public function get($key)
     {
         if (!isset($this->clipboard[$key])) {
@@ -33,26 +30,17 @@ class SharedStorage implements SharedStorageInterface
         return $this->clipboard[$key];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function has($key)
+    public function has($key): bool
     {
         return isset($this->clipboard[$key]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function set($key, $resource)
+    public function set($key, $resource): void
     {
         $this->clipboard[$key] = $resource;
         $this->latestKey = $key;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getLatestResource()
     {
         if (!isset($this->clipboard[$this->latestKey])) {
@@ -62,11 +50,8 @@ class SharedStorage implements SharedStorageInterface
         return $this->clipboard[$this->latestKey];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setClipboard(array $clipboard)
+    public function setClipboard(array $clipboard): void
     {
-        $this->clipboard = $clipboard;
+        $this->clipboard = array_merge($this->clipboard, $clipboard);
     }
 }

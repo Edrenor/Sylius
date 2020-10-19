@@ -17,23 +17,21 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @final
+ */
 class RemoveExpiredCartsCommand extends ContainerAwareCommand
 {
-    /**
-     * {@inheritdoc}
-     */
+    protected static $defaultName = 'sylius:remove-expired-carts';
+
     protected function configure(): void
     {
         $this
-            ->setName('sylius:remove-expired-carts')
             ->setDescription('Removes carts that have been idle for a period set in `sylius_order.expiration.cart` configuration key.')
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $expirationTime = $this->getContainer()->getParameter('sylius_order.cart_expiration_period');
         $output->writeln(
@@ -42,5 +40,7 @@ class RemoveExpiredCartsCommand extends ContainerAwareCommand
 
         $expiredCartsRemover = $this->getContainer()->get('sylius.expired_carts_remover');
         $expiredCartsRemover->remove();
+
+        return 0;
     }
 }

@@ -20,27 +20,30 @@ use Sylius\Component\Promotion\Model\Promotion as BasePromotion;
 
 class Promotion extends BasePromotion implements PromotionInterface
 {
-    /** @var ChannelInterface[]|Collection */
+    /**
+     * @var Collection|ChannelInterface[]
+     *
+     * @psalm-var Collection<array-key, ChannelInterface>
+     */
     protected $channels;
 
     public function __construct()
     {
         parent::__construct();
 
+        /** @var ArrayCollection<array-key, ChannelInterface> $this->channels */
         $this->channels = new ArrayCollection();
     }
 
     /**
-     * {@inheritdoc}
+     * @psalm-suppress InvalidReturnType https://github.com/doctrine/collections/pull/220
+     * @psalm-suppress InvalidReturnStatement https://github.com/doctrine/collections/pull/220
      */
     public function getChannels(): Collection
     {
         return $this->channels;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addChannel(BaseChannelInterface $channel): void
     {
         if (!$this->hasChannel($channel)) {
@@ -48,9 +51,6 @@ class Promotion extends BasePromotion implements PromotionInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function removeChannel(BaseChannelInterface $channel): void
     {
         if ($this->hasChannel($channel)) {
@@ -58,9 +58,6 @@ class Promotion extends BasePromotion implements PromotionInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasChannel(BaseChannelInterface $channel): bool
     {
         return $this->channels->contains($channel);

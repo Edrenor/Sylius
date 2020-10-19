@@ -51,9 +51,6 @@ final class OrderShipmentProcessor implements OrderProcessorInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function process(BaseOrderInterface $order): void
     {
         /** @var OrderInterface $order */
@@ -104,6 +101,9 @@ final class OrderShipmentProcessor implements OrderProcessorInterface
         foreach ($shipment->getUnits() as $unit) {
             $shipment->removeUnit($unit);
         }
+
+        /** @var OrderInterface $order */
+        Assert::isInstanceOf($order, OrderInterface::class);
 
         foreach ($order->getItemUnits() as $itemUnit) {
             if (null === $itemUnit->getShipment()) {

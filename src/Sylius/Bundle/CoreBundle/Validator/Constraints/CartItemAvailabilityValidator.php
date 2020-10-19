@@ -31,22 +31,20 @@ final class CartItemAvailabilityValidator extends ConstraintValidator
         $this->availabilityChecker = $availabilityChecker;
     }
 
-    /**
-     * @param AddToCartCommandInterface $addCartItemCommand
-     *
-     * {@inheritdoc}
-     */
-    public function validate($addCartItemCommand, Constraint $constraint): void
+    public function validate($value, Constraint $constraint): void
     {
-        Assert::isInstanceOf($addCartItemCommand, AddToCartCommandInterface::class);
+        /** @var AddToCartCommandInterface $value */
+        Assert::isInstanceOf($value, AddToCartCommandInterface::class);
+
+        /** @var CartItemAvailability $constraint */
         Assert::isInstanceOf($constraint, CartItemAvailability::class);
 
         /** @var OrderItemInterface $cartItem */
-        $cartItem = $addCartItemCommand->getCartItem();
+        $cartItem = $value->getCartItem();
 
         $isStockSufficient = $this->availabilityChecker->isStockSufficient(
             $cartItem->getVariant(),
-            $cartItem->getQuantity() + $this->getExistingCartItemQuantityFromCart($addCartItemCommand->getCart(), $cartItem)
+            $cartItem->getQuantity() + $this->getExistingCartItemQuantityFromCart($value->getCart(), $cartItem)
         );
 
         if (!$isStockSufficient) {

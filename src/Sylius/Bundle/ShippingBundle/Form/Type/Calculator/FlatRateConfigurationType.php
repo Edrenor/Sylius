@@ -18,13 +18,11 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\Constraints\Type;
 
 final class FlatRateConfigurationType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -32,6 +30,7 @@ final class FlatRateConfigurationType extends AbstractType
                 'label' => 'sylius.form.shipping_calculator.flat_rate_configuration.amount',
                 'constraints' => [
                     new NotBlank(['groups' => ['sylius']]),
+                    new Range(['min' => 0, 'minMessage' => 'sylius.shipping_method.calculator.min', 'groups' => ['sylius']]),
                     new Type(['type' => 'integer', 'groups' => ['sylius']]),
                 ],
                 'currency' => $options['currency'],
@@ -39,9 +38,6 @@ final class FlatRateConfigurationType extends AbstractType
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
@@ -53,9 +49,6 @@ final class FlatRateConfigurationType extends AbstractType
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'sylius_shipping_calculator_flat_rate';

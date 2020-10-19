@@ -40,13 +40,13 @@ class ShippingMethodExampleFactory extends AbstractExampleFactory implements Exa
     private $shippingCategoryRepository;
 
     /** @var RepositoryInterface */
-    private $taxCategoryRepository;
-
-    /** @var RepositoryInterface */
     private $localeRepository;
 
     /** @var ChannelRepositoryInterface */
     private $channelRepository;
+
+    /** @var RepositoryInterface|null */
+    private $taxCategoryRepository;
 
     /** @var \Faker\Generator */
     private $faker;
@@ -65,12 +65,12 @@ class ShippingMethodExampleFactory extends AbstractExampleFactory implements Exa
         $this->shippingMethodFactory = $shippingMethodFactory;
         $this->zoneRepository = $zoneRepository;
         $this->shippingCategoryRepository = $shippingCategoryRepository;
+        $this->localeRepository = $localeRepository;
+        $this->channelRepository = $channelRepository;
         $this->taxCategoryRepository = $taxCategoryRepository;
         if ($this->taxCategoryRepository === null) {
             @trigger_error(sprintf('Not passing a $taxCategoryRepository to %s constructor is deprecated since Sylius 1.4 and will be removed in Sylius 2.0.', self::class), \E_USER_DEPRECATED);
         }
-        $this->localeRepository = $localeRepository;
-        $this->channelRepository = $channelRepository;
 
         $this->faker = \Faker\Factory::create();
         $this->optionsResolver = new OptionsResolver();
@@ -78,9 +78,6 @@ class ShippingMethodExampleFactory extends AbstractExampleFactory implements Exa
         $this->configureOptions($this->optionsResolver);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function create(array $options = []): ShippingMethodInterface
     {
         $options = $this->optionsResolver->resolve($options);
@@ -117,9 +114,6 @@ class ShippingMethodExampleFactory extends AbstractExampleFactory implements Exa
         return $shippingMethod;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
@@ -127,7 +121,10 @@ class ShippingMethodExampleFactory extends AbstractExampleFactory implements Exa
                 return StringInflector::nameToCode($options['name']);
             })
             ->setDefault('name', function (Options $options): string {
-                return $this->faker->words(3, true);
+                /** @var string $words */
+                $words = $this->faker->words(3, true);
+
+                return $words;
             })
             ->setDefault('description', function (Options $options): string {
                 return $this->faker->sentence();
@@ -162,6 +159,7 @@ class ShippingMethodExampleFactory extends AbstractExampleFactory implements Exa
             ->setDefault('archived_at', null)
             ->setAllowedTypes('archived_at', ['null', \DateTimeInterface::class])
         ;
+
         if ($this->taxCategoryRepository !== null) {
             $resolver->setNormalizer('tax_category', LazyOption::findOneBy($this->taxCategoryRepository, 'code'));
         }

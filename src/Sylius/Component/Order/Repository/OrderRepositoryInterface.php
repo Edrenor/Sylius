@@ -26,9 +26,13 @@ interface OrderRepositoryInterface extends RepositoryInterface
      */
     public function findLatest(int $count): array;
 
+    public function findLatestCart(): ?OrderInterface;
+
     public function findOneByNumber(string $number): ?OrderInterface;
 
     public function findOneByTokenValue(string $tokenValue): ?OrderInterface;
+
+    public function findCartByTokenValue(string $tokenValue): ?OrderInterface;
 
     public function findCartById($id): ?OrderInterface;
 

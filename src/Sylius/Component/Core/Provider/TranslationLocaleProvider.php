@@ -31,24 +31,18 @@ final class TranslationLocaleProvider implements TranslationLocaleProviderInterf
         $this->defaultLocaleCode = $defaultLocaleCode;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDefinedLocalesCodes(): array
     {
         $locales = $this->localeRepository->findAll();
 
         return array_map(
             function (LocaleInterface $locale) {
-                return $locale->getCode();
+                return (string) $locale->getCode();
             },
             $locales
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDefaultLocaleCode(): string
     {
         return $this->defaultLocaleCode;

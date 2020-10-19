@@ -17,6 +17,7 @@ use Sylius\Bundle\CoreBundle\DependencyInjection\Compiler\BackwardsCompatibility
 use Sylius\Bundle\CoreBundle\DependencyInjection\Compiler\IgnoreAnnotationsPass;
 use Sylius\Bundle\CoreBundle\DependencyInjection\Compiler\LazyCacheWarmupPass;
 use Sylius\Bundle\CoreBundle\DependencyInjection\Compiler\RegisterTaxCalculationStrategiesPass;
+use Sylius\Bundle\CoreBundle\DependencyInjection\Compiler\RegisterUriBasedSectionResolverPass;
 use Sylius\Bundle\CoreBundle\DependencyInjection\Compiler\TranslatableEntityLocalePass;
 use Sylius\Bundle\ResourceBundle\AbstractResourceBundle;
 use Sylius\Bundle\ResourceBundle\SyliusResourceBundle;
@@ -24,9 +25,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class SyliusCoreBundle extends AbstractResourceBundle
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getSupportedDrivers(): array
     {
         return [
@@ -34,9 +32,6 @@ final class SyliusCoreBundle extends AbstractResourceBundle
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerBuilder $container): void
     {
         parent::build($container);
@@ -46,10 +41,11 @@ final class SyliusCoreBundle extends AbstractResourceBundle
         $container->addCompilerPass(new TranslatableEntityLocalePass());
         $container->addCompilerPass(new IgnoreAnnotationsPass());
         $container->addCompilerPass(new ResolveShopUserTargetEntityPass());
+        $container->addCompilerPass(new RegisterUriBasedSectionResolverPass());
     }
 
     /**
-     * {@inheritdoc}
+     * @psalm-suppress MismatchingDocblockReturnType https://github.com/vimeo/psalm/issues/2345
      */
     protected function getModelNamespace(): string
     {

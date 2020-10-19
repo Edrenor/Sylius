@@ -22,12 +22,9 @@ use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 
 final class SyliusAdminApiExtension extends AbstractResourceExtension implements PrependExtensionInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function load(array $config, ContainerBuilder $container): void
+    public function load(array $configs, ContainerBuilder $container): void
     {
-        $config = $this->processConfiguration($this->getConfiguration([], $container), $config);
+        $config = $this->processConfiguration($this->getConfiguration([], $container), $configs);
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
 
         $this->registerResources('sylius', $config['driver'], $config['resources'], $container);
@@ -36,12 +33,12 @@ final class SyliusAdminApiExtension extends AbstractResourceExtension implements
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @throws ServiceNotFoundException
      */
     public function prepend(ContainerBuilder $container): void
     {
+        $this->prependDoctrineMigrations($container);
+
         if (!$container->hasExtension('fos_oauth_server')) {
             throw new ServiceNotFoundException('FOSOAuthServerBundle must be registered in kernel.');
         }
@@ -58,6 +55,26 @@ final class SyliusAdminApiExtension extends AbstractResourceExtension implements
             'service' => [
                 'user_provider' => 'sylius.admin_user_provider.email_or_name_based',
                 'client_manager' => 'sylius.oauth_server.client_manager',
+            ],
+        ]);
+    }
+
+    private function prependDoctrineMigrations(ContainerBuilder $container): void
+    {
+        if (!$container->hasExtension('doctrine_migrations') || !$container->hasExtension('sylius_labs_doctrine_migrations_extra')) {
+            return;
+        }
+
+        $doctrineConfig = $container->getExtensionConfig('doctrine_migrations');
+        $container->prependExtensionConfig('doctrine_migrations', [
+            'migrations_paths' => \array_merge(\array_pop($doctrineConfig)['migrations_paths'] ?? [], [
+                'Sylius\Bundle\AdminApiBundle\Migrations' => '@SyliusAdminApiBundle/Migrations',
+            ]),
+        ]);
+
+        $container->prependExtensionConfig('sylius_labs_doctrine_migrations_extra', [
+            'migrations' => [
+                'Sylius\Bundle\AdminApiBundle\Migrations' => ['Sylius\Bundle\CoreBundle\Migrations'],
             ],
         ]);
     }

@@ -22,9 +22,13 @@ final class TaxonContext implements Context
     /** @var TaxonRepositoryInterface */
     private $taxonRepository;
 
-    public function __construct(TaxonRepositoryInterface $taxonRepository)
+    /** @var string */
+    private $locale;
+
+    public function __construct(TaxonRepositoryInterface $taxonRepository, string $locale)
     {
         $this->taxonRepository = $taxonRepository;
+        $this->locale = $locale;
     }
 
     /**
@@ -34,13 +38,14 @@ final class TaxonContext implements Context
      * @Transform /^"([^"]+)" as a parent taxon$/
      * @Transform /^"([^"]+)" parent taxon$/
      * @Transform /^parent taxon to "([^"]+)"$/
+     * @Transform /^taxon should be "([^"]+)"$/
      * @Transform /^taxon with "([^"]+)" name/
      * @Transform /^taxon "([^"]+)"$/
      * @Transform :taxon
      */
     public function getTaxonByName($name)
     {
-        $taxons = $this->taxonRepository->findByName($name, 'en_US');
+        $taxons = $this->taxonRepository->findByName($name, $this->locale);
 
         Assert::eq(
             count($taxons),

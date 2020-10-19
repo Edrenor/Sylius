@@ -21,7 +21,13 @@ use Symfony\Component\Process\Exception\RuntimeException;
 
 final class InstallCommand extends AbstractInstallCommand
 {
-    /** @var array */
+    protected static $defaultName = 'sylius:install';
+
+    /**
+     * @var array
+     *
+     * @psalm-var non-empty-list
+     */
     private $commands = [
         [
             'command' => 'check-requirements',
@@ -41,13 +47,9 @@ final class InstallCommand extends AbstractInstallCommand
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configure(): void
     {
         $this
-            ->setName('sylius:install')
             ->setDescription('Installs Sylius in your preferred environment.')
             ->setHelp(<<<EOT
 The <info>%command.name%</info> command installs Sylius.
@@ -57,10 +59,7 @@ EOT
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $suite = $input->getOption('fixture-suite');
 
@@ -95,6 +94,8 @@ EOT
         $outputStyle->newLine(2);
         $outputStyle->success($this->getProperFinalMessage($errored));
         $outputStyle->writeln('You can now open your store at the following path under the website root: /');
+
+        return $errored ? 1 : 0;
     }
 
     private function getProperFinalMessage(bool $errored): string
@@ -108,23 +109,23 @@ EOT
 
     private function getSyliusLogo(): string
     {
-        return '                                                                  
-           <info>,</info>                                                       
-         <info>,;:,</info>                                                      
-       <info>`;;;.:`</info>                                                     
-      <info>`::;`  :`</info>                                                    
-       <info>:::`   `</info>          .\'++:           \'\'.   \'.                  
-       <info>`:::</info>             :+\',;+\'          :+;  `+.                  
-        <info>::::</info>            +\'   :\'          `+;                       
+        return '
+           <info>,</info>
+         <info>,;:,</info>
+       <info>`;;;.:`</info>
+      <info>`::;`  :`</info>
+       <info>:::`   `</info>          .\'++:           \'\'.   \'.
+       <info>`:::</info>             :+\',;+\'          :+;  `+.
+        <info>::::</info>            +\'   :\'          `+;
         <info>`:::,</info>           \'+`     ++    :+.`+; `++. ;+\'    \'\'  ,++++.
          <info>,:::`</info>          `++\'.   .+:  `+\' `+;  .+,  ;+    +\'  +;  \'\'
-          <info>::::`</info>           ,+++.  \'+` :+. `+;  `+,  ;+    +\'  \'+.   
-   <info>,.     .::::</info>             .++` `+: +\'  `+;  `+,  ;+    +\'  `;++; 
+          <info>::::`</info>           ,+++.  \'+` :+. `+;  `+,  ;+    +\'  \'+.
+   <info>,.     .::::</info>             .++` `+: +\'  `+;  `+,  ;+    +\'  `;++;
 <info>`;;.:::`   :::::</info>             :+.  \'+,+.  `+;  `+,  ;+   `+\'     .++
  <info>.;;;;;;::`.::::,</info>       +\'` `++   `++\'   `+;  `+:  :+. `++\'  \'.  ;+
   <info>,;;;;;;;;;:::::</info>       .+++++`    ;+,    ++;  ++, `\'+++,\'+\' :++++,
-   <info>,;;;;;;;;;:::</info>`                  ;\'                              
-    <info>:;;;;;;;;;:,</info>                :.:+,                              
+   <info>,;;;;;;;;;:::</info>`                  ;\'
+    <info>:;;;;;;;;;:,</info>                :.:+,
      <info>;;;;;;;;;:</info>                 ;++,'
         ;
     }

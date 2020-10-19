@@ -11,23 +11,23 @@ Feature: Preventing not available payment method selection
         And the store ships everywhere for free
         And I am a logged in customer
 
-    @ui
+    @ui @api
     Scenario: Not being able to select disabled payment method
         Given the payment method "Paypal Express Checkout" is disabled
         And I have product "PHP T-Shirt" in the cart
         And I am at the checkout addressing step
-        When I specify the shipping address as "Ankh Morpork", "Frost Alley", "90210", "United States" for "Jon Snow"
+        When I specify the billing address as "Ankh Morpork", "Frost Alley", "90210", "United States" for "Jon Snow"
         And I complete the addressing step
         And I select "Free" shipping method
         And I complete the shipping step
         Then I should not be able to select "Paypal Express Checkout" payment method
 
-    @ui
+    @ui @api
     Scenario: Not being able to select payment method not available for oder channel
         Given the store has "Cash on delivery" payment method not assigned to any channel
         And I have product "PHP T-Shirt" in the cart
         And I am at the checkout addressing step
-        When I specify the shipping address as "Ankh Morpork", "Frost Alley", "90210", "United States" for "Jon Snow"
+        When I specify the billing address as "Ankh Morpork", "Frost Alley", "90210", "United States" for "Jon Snow"
         And I complete the addressing step
         And I select "Free" shipping method
         And I complete the shipping step

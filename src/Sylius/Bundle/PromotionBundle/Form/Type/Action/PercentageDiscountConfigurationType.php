@@ -23,9 +23,6 @@ use Symfony\Component\Validator\Constraints\Type;
 
 final class PercentageDiscountConfigurationType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -37,8 +34,7 @@ final class PercentageDiscountConfigurationType extends AbstractType
                     new Range([
                         'min' => 0,
                         'max' => 1,
-                        'minMessage' => 'sylius.promotion_action.percentage_discount_configuration.min',
-                        'maxMessage' => 'sylius.promotion_action.percentage_discount_configuration.max',
+                        'notInRangeMessage' => 'sylius.promotion_action.percentage_discount_configuration.not_in_range',
                         'groups' => ['sylius'],
                     ]),
                 ],
@@ -47,9 +43,6 @@ final class PercentageDiscountConfigurationType extends AbstractType
         $builder->get('percentage')->resetViewTransformers()->addViewTransformer(new PercentFloatToLocalizedStringTransformer());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
         return 'sylius_promotion_action_percentage_discount_configuration';

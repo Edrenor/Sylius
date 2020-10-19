@@ -19,13 +19,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class CheckRequirementsCommand extends AbstractInstallCommand
 {
-    /**
-     * {@inheritdoc}
-     */
+    protected static $defaultName = 'sylius:install:check-requirements';
+
     protected function configure(): void
     {
         $this
-            ->setName('sylius:install:check-requirements')
             ->setDescription('Checks if all Sylius requirements are satisfied.')
             ->setHelp(<<<EOT
 The <info>%command.name%</info> command checks system requirements.
@@ -34,10 +32,7 @@ EOT
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $fulfilled = $this->getContainer()->get('sylius.installer.checker.sylius_requirements')->check($input, $output);
 
@@ -48,5 +43,7 @@ EOT
         }
 
         $output->writeln('<info>Success! Your system can run Sylius properly.</info>');
+
+        return 0;
     }
 }

@@ -13,16 +13,13 @@ declare(strict_types=1);
 
 namespace Sylius\Component\Currency\Converter;
 
-use Symfony\Component\Intl\Intl;
+use Symfony\Component\Intl\Currencies;
 
 class CurrencyNameConverter implements CurrencyNameConverterInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function convertToCode(string $name, ?string $locale = null): string
     {
-        $names = Intl::getCurrencyBundle()->getCurrencyNames($locale ?? 'en');
+        $names = Currencies::getNames($locale ?? 'en');
         $currencyCode = array_search($name, $names, true);
 
         if (false === $currencyCode) {

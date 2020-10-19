@@ -33,10 +33,7 @@ final class CountryChoiceTypeTest extends TypeTestCase
     /** @var ProphecyInterface|CountryInterface */
     private $poland;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->countryRepository = $this->prophesize(RepositoryInterface::class);
 
@@ -55,10 +52,7 @@ final class CountryChoiceTypeTest extends TypeTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         $type = new CountryChoiceType($this->countryRepository->reveal());
 
@@ -70,7 +64,7 @@ final class CountryChoiceTypeTest extends TypeTestCase
     /**
      * @test
      */
-    public function it_returns_only_enabled_countries_by_default()
+    public function it_returns_only_enabled_countries_by_default(): void
     {
         $this->countryRepository->findBy(['enabled' => true])->willReturn([
             $this->france->reveal(),
@@ -83,7 +77,7 @@ final class CountryChoiceTypeTest extends TypeTestCase
     /**
      * @test
      */
-    public function it_returns_all_countries()
+    public function it_returns_all_countries(): void
     {
         $this->countryRepository->findAll()->willReturn([
             $this->france->reveal(),
@@ -96,7 +90,7 @@ final class CountryChoiceTypeTest extends TypeTestCase
     /**
      * @test
      */
-    public function it_returns_countries_in_an_alphabetical_order()
+    public function it_returns_countries_in_an_alphabetical_order(): void
     {
         $this->countryRepository->findBy(['enabled' => true])->willReturn([
             $this->poland->reveal(),
@@ -109,7 +103,7 @@ final class CountryChoiceTypeTest extends TypeTestCase
     /**
      * @test
      */
-    public function it_returns_filtered_out_countries()
+    public function it_returns_filtered_out_countries(): void
     {
         $this->countryRepository->findBy(['enabled' => true])->willReturn([
             $this->france->reveal(),

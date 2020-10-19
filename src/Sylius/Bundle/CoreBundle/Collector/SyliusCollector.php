@@ -97,10 +97,7 @@ final class SyliusCollector extends DataCollector
         return $this->data['default_locale_code'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function collect(Request $request, Response $response, \Exception $exception = null): void
+    public function collect(Request $request, Response $response, \Throwable $exception = null): void
     {
         try {
             /** @var ChannelInterface $channel */
@@ -117,9 +114,6 @@ final class SyliusCollector extends DataCollector
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function reset(): void
     {
         $this->data['base_currency_code'] = null;
@@ -127,9 +121,6 @@ final class SyliusCollector extends DataCollector
         $this->data['locale_code'] = null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName(): string
     {
         return 'sylius_core';

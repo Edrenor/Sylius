@@ -18,7 +18,11 @@ use Zend\Stdlib\PriorityQueue;
 
 final class CompositeOrderProcessor implements OrderProcessorInterface
 {
-    /** @var PriorityQueue|OrderProcessorInterface[] */
+    /**
+     * @var PriorityQueue|OrderProcessorInterface[]
+     *
+     * @psalm-var PriorityQueue<OrderProcessorInterface>
+     */
     private $orderProcessors;
 
     public function __construct()
@@ -31,9 +35,6 @@ final class CompositeOrderProcessor implements OrderProcessorInterface
         $this->orderProcessors->insert($orderProcessor, $priority);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function process(OrderInterface $order): void
     {
         foreach ($this->orderProcessors as $orderProcessor) {

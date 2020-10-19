@@ -85,6 +85,14 @@ final class ManagingPaymentsContext implements Context
     }
 
     /**
+     * @When I choose :channelName as a channel filter
+     */
+    public function iChooseChannelAsAChannelFilter(string $channelName): void
+    {
+        $this->indexPage->chooseChannelFilter($channelName);
+    }
+
+    /**
      * @Then I should see :count payments in the list
      * @Then I should see a single payment in the list
      */
@@ -94,9 +102,9 @@ final class ManagingPaymentsContext implements Context
     }
 
     /**
-     * @Then the payments of the :orderNumber order should be :paymentState for :customer
+     * @Then the payment of the :orderNumber order should be :paymentState for :customer
      */
-    public function thePaymentsOfTheOrderShouldBeFor(
+    public function thePaymentOfTheOrderShouldBeFor(
         string $orderNumber,
         string $paymentState,
         CustomerInterface $customer
@@ -144,6 +152,7 @@ final class ManagingPaymentsContext implements Context
 
     /**
      * @Then I should not see a payment of order :orderNumber
+     * @Then I should not see the payment of the :orderNumber order
      */
     public function iShouldNotSeeAPaymentOfOrder(string $orderNumber): void
     {
@@ -153,7 +162,7 @@ final class ManagingPaymentsContext implements Context
     /**
      * @Then /^I should see payment for (the "[^"]+" order) as (\d+)(?:|st|nd|rd|th) in the list$/
      */
-    public function iShouldSeePaymentForTheOrderInTheList(string $orderNumber,int $position): void
+    public function iShouldSeePaymentForTheOrderInTheList(string $orderNumber, int $position): void
     {
         Assert::true($this->indexPage->isPaymentWithOrderNumberInPosition($orderNumber, $position));
     }

@@ -23,24 +23,18 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Intl\Intl;
+use Symfony\Component\Intl\Countries;
 
 final class CountryTypeExtension extends AbstractTypeExtension
 {
     /** @var RepositoryInterface */
     private $countryRepository;
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct(RepositoryInterface $countryRepository)
     {
         $this->countryRepository = $countryRepository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
@@ -75,17 +69,19 @@ final class CountryTypeExtension extends AbstractTypeExtension
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtendedType(): string
     {
         return CountryType::class;
     }
 
-    private function getCountryName(string $code): ?string
+    public static function getExtendedTypes(): iterable
     {
-        return Intl::getRegionBundle()->getCountryName($code);
+        return [CountryType::class];
+    }
+
+    private function getCountryName(string $code): string
+    {
+        return Countries::getName($code);
     }
 
     /**
@@ -93,7 +89,7 @@ final class CountryTypeExtension extends AbstractTypeExtension
      */
     private function getAvailableCountries(): array
     {
-        $availableCountries = Intl::getRegionBundle()->getCountryNames();
+        $availableCountries = Countries::getNames();
 
         /** @var CountryInterface[] $definedCountries */
         $definedCountries = $this->countryRepository->findAll();

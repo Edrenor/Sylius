@@ -31,24 +31,25 @@ use Webmozart\Assert\Assert;
 
 class Kernel extends HttpKernel
 {
-    public const VERSION = '1.7.0-DEV';
-    public const VERSION_ID = '10700';
+    public const VERSION = '1.8.4-DEV';
+
+    public const VERSION_ID = '10804';
+
     public const MAJOR_VERSION = '1';
-    public const MINOR_VERSION = '7';
-    public const RELEASE_VERSION = '0';
+
+    public const MINOR_VERSION = '8';
+
+    public const RELEASE_VERSION = '4';
+
     public const EXTRA_VERSION = 'DEV';
 
     public function __construct(string $environment, bool $debug)
     {
-        // TODO: Better deprecation message!
-        @trigger_error(sprintf('Using "%s" as Symfony kernel is deprecated since Sylius 1.3. Please migrate to Symfony 4 directory structure.', self::class), \E_USER_DEPRECATED);
+        @trigger_error(sprintf('Using "%s" as Symfony kernel is deprecated since Sylius 1.3. Please migrate to Symfony 4 directory structure. Upgrade guide: https://github.com/Sylius/Sylius/blob/1.3/UPGRADE-1.3.md#directory-structure-change', self::class), \E_USER_DEPRECATED);
 
         parent::__construct($environment, $debug);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function registerBundles(): array
     {
         $bundles = [
@@ -114,9 +115,6 @@ class Kernel extends HttpKernel
         return $bundles;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getContainerBaseClass(): string
     {
         if (in_array($this->getEnvironment(), ['test', 'test_cached'], true)) {
@@ -126,9 +124,6 @@ class Kernel extends HttpKernel
         return parent::getContainerBaseClass();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getContainerLoader(ContainerInterface $container): LoaderInterface
     {
         /** @var ContainerBuilder $container */
@@ -147,9 +142,6 @@ class Kernel extends HttpKernel
         return new DelegatingLoader($resolver);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function registerContainerConfiguration(LoaderInterface $loader): void
     {
         $loader->load($this->getRootDir() . '/config/config_' . $this->getEnvironment() . '.yml');
@@ -160,9 +152,6 @@ class Kernel extends HttpKernel
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCacheDir(): string
     {
         if ($this->isVagrantEnvironment()) {
@@ -172,9 +161,6 @@ class Kernel extends HttpKernel
         return dirname($this->getRootDir()) . '/var/cache/' . $this->getEnvironment();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getLogDir(): string
     {
         if ($this->isVagrantEnvironment()) {

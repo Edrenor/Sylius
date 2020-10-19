@@ -89,17 +89,17 @@ final class CheckoutContext implements Context
      */
     public function iWasAtTheCheckoutSummaryStep()
     {
-        $this->addressingContext->iSpecifiedTheShippingAddress();
+        $this->addressingContext->iSpecifiedTheBillingAddress();
         $this->iProceedOrderWithShippingMethodAndPayment('Free', 'Offline');
     }
 
     /**
-     * @Given I chose :shippingMethodName shipping method
+     * @Given I chose :shippingMethodname shipping method
      * @When I proceed selecting :shippingMethodName shipping method
      */
-    public function iProceedSelectingShippingMethod($shippingMethodName)
+    public function iProceedSelectingShippingMethod(string $shippingMethodName): void
     {
-        $this->iProceedSelectingShippingCountryAndShippingMethod(null, $shippingMethodName);
+        $this->iProceedSelectingBillingCountryAndShippingMethod(null, $shippingMethodName);
     }
 
     /**
@@ -108,44 +108,50 @@ final class CheckoutContext implements Context
      */
     public function iProceedSelectingPaymentMethod($paymentMethodName)
     {
-        $this->iProceedSelectingShippingCountryAndShippingMethod();
+        $this->iProceedSelectingBillingCountryAndShippingMethod();
         $this->paymentContext->iChoosePaymentMethod($paymentMethodName);
     }
 
     /**
      * @Given I have proceeded order with :shippingMethodName shipping method and :paymentMethodName payment
+     * @Given I proceeded with :shippingMethodName shipping method and :paymentMethodName payment
      * @When I proceed with :shippingMethodName shipping method and :paymentMethodName payment
      */
-    public function iProceedOrderWithShippingMethodAndPayment($shippingMethodName, $paymentMethodName)
+    public function iProceedOrderWithShippingMethodAndPayment(string $shippingMethodName, string $paymentMethodName): void
     {
         $this->shippingContext->iHaveProceededSelectingShippingMethod($shippingMethodName);
         $this->paymentContext->iChoosePaymentMethod($paymentMethodName);
     }
 
     /**
+     * @Given I have proceeded through checkout process in the :localeCode locale with email :email
+     * @Given I have proceeded through checkout process
      * @When I proceed through checkout process
      * @When I proceed through checkout process in the :localeCode locale
+     * @When I proceed through checkout process in the :localeCode locale with email :email
      */
-    public function iProceedThroughCheckoutProcess($localeCode = 'en_US')
+    public function iProceedThroughCheckoutProcess(string $localeCode = 'en_US', ?string $email = null): void
     {
-        $this->addressingContext->iProceedSelectingShippingCountry(null, $localeCode);
+        $this->addressingContext->iProceedSelectingBillingCountry(null, $localeCode, $email);
         $this->shippingContext->iCompleteTheShippingStep();
         $this->paymentContext->iCompleteThePaymentStep();
     }
 
     /**
-     * @When /^I proceed selecting ("[^"]+" as shipping country) with "([^"]+)" method$/
+     * @When /^I proceed selecting ("[^"]+" as billing country) with "([^"]+)" method$/
      */
-    public function iProceedSelectingShippingCountryAndShippingMethod(CountryInterface $shippingCountry = null, $shippingMethodName = null)
-    {
-        $this->addressingContext->iProceedSelectingShippingCountry($shippingCountry);
+    public function iProceedSelectingBillingCountryAndShippingMethod(
+        CountryInterface $shippingCountry = null,
+        ?string $shippingMethodName = null
+    ): void {
+        $this->addressingContext->iProceedSelectingBillingCountry($shippingCountry);
         $this->shippingContext->iHaveProceededSelectingShippingMethod($shippingMethodName ?: 'Free');
     }
 
     /**
      * @When /^I change shipping method to "([^"]*)"$/
      */
-    public function iChangeShippingMethod($shippingMethodName)
+    public function iChangeShippingMethod(string $shippingMethodName): void
     {
         $this->paymentContext->iDecideToChangeMyShippingMethod();
         $this->shippingContext->iHaveProceededSelectingShippingMethod($shippingMethodName);

@@ -17,17 +17,11 @@ use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 
 class ChannelFixture extends AbstractResourceFixture
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getName(): string
     {
         return 'channel';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configureResourceNode(ArrayNodeDefinition $resourceNode): void
     {
         $resourceNode
@@ -58,6 +52,7 @@ class ChannelFixture extends AbstractResourceFixture
                         ->scalarNode('postcode')->end()
                     ->end()
                 ->end()
+                ->scalarNode('menu_taxon')->end()
         ;
     }
 }

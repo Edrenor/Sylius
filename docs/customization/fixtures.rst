@@ -119,7 +119,7 @@ How to customize fixtures for customized models?
     The following example is based on `other example of extending an entity with a new field <https://github.com/Sylius/Customizations/pull/7>`_.
     You can browse the full implementation of this example on `this GitHub Pull Request <https://github.com/Sylius/Customizations/pull/23>`__.
 
-Let's suppose you have extended ``App\Entity\Shipping\ShippingMethod`` extended with a new field ``deliveryConditions``,
+Let's suppose you have extended ``App\Entity\Shipping\ShippingMethod`` with a new field ``deliveryConditions``,
 just like in the example mentioned above.
 
 **1.** To cover that in fixtures, you will need to override the ``ShippingMethodExampleFactory`` and add this field:
@@ -137,7 +137,7 @@ just like in the example mentioned above.
 
     final class ShippingMethodExampleFactory extends BaseShippingMethodExampleFactory
     {
-        ...
+        //...
 
         public function create(array $options = []): ShippingMethodInterface
         {
@@ -262,4 +262,4 @@ Learn more
 ~~~~~~~~~~
 
 * :doc:`The Book: Fixtures </book/architecture/fixtures>`
-* :doc:`FixturesBundle </components_and_bundles/bundles/SyliusFixturesBundle/index>`
+* `FixturesBundle <https://github.com/Sylius/SyliusFixturesBundle/blob/master/docs/index.md>`_

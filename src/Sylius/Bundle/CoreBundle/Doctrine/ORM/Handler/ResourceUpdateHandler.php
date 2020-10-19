@@ -31,17 +31,15 @@ final class ResourceUpdateHandler implements ResourceUpdateHandlerInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @throws RaceConditionException
      */
     public function handle(
         ResourceInterface $resource,
-        RequestConfiguration $configuration,
+        RequestConfiguration $requestConfiguration,
         ObjectManager $manager
     ): void {
         try {
-            $this->decoratedHandler->handle($resource, $configuration, $manager);
+            $this->decoratedHandler->handle($resource, $requestConfiguration, $manager);
         } catch (OptimisticLockException $exception) {
             throw new RaceConditionException($exception);
         }

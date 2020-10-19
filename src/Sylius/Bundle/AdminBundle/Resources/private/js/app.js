@@ -19,6 +19,7 @@ import 'sylius/ui/sylius-prototype-handler';
 
 import './sylius-compound-form-errors';
 import './sylius-lazy-choice-tree';
+import './sylius-menu-search';
 import './sylius-move-product-variant';
 import './sylius-move-taxon';
 import './sylius-notification';
@@ -26,6 +27,7 @@ import './sylius-product-images-preview';
 import './sylius-product-slug';
 import './sylius-taxon-slug';
 
+import StatisticsComponent from './sylius-statistics';
 import SyliusTaxonomyTree from './sylius-taxon-tree';
 import formsList from './sylius-forms-list';
 
@@ -62,9 +64,11 @@ $(document).ready(() => {
       $('select[name^="sylius_promotion[actions]"][name$="[type]"]').last().change();
     }, 50);
   });
-  $('#rules a[data-form-collection="add"]').on('click', () => {
+  $('#rules a[data-form-collection="add"]').on('click', (event) => {
+    const name = $(event.target).closest('form').attr('name');
+
     setTimeout(() => {
-      $('select[name^="sylius_promotion[rules]"][name$="[type]"]').last().change();
+      $(`select[name^="${name}[rules]"][name$="[type]"]`).last().change();
     }, 50);
   });
 
@@ -105,10 +109,16 @@ $(document).ready(() => {
 
   $(`${formsList}, .check-unsaved`).dirtyForms();
 
+  $('#more-details').accordion({ exclusive: false });
+
   $('.variants-accordion__title').on('click', '.icon.button', function(e) {
     $(e.delegateTarget).next('.variants-accordion__content').toggle();
     $(this).find('.dropdown.icon').toggleClass('counterclockwise rotated');
   });
+
+  const dashboardStatistics = new StatisticsComponent(document.querySelector('.stats'));
+
+  $('.sylius-admin-menu').searchable('.sylius-admin-menu-search-input');
 });
 
 window.$ = $;

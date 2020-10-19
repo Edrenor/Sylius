@@ -31,8 +31,6 @@ final class TaxonsToCodesTransformer implements DataTransformerInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @throws \InvalidArgumentException
      */
     public function transform($value): Collection
@@ -47,17 +45,11 @@ final class TaxonsToCodesTransformer implements DataTransformerInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @throws \InvalidArgumentException
      */
     public function reverseTransform($taxons): array
     {
         Assert::isInstanceOf($taxons, Collection::class);
-
-        if (null === $taxons) {
-            return [];
-        }
 
         return array_map(function (TaxonInterface $taxon) {
             return $taxon->getCode();

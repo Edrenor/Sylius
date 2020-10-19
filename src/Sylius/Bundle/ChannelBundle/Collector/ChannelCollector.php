@@ -35,12 +35,12 @@ final class ChannelCollector extends DataCollector
 
         $this->data = [
             'channel' => null,
-            'channels' => $channelRepository->findAll(),
+            'channels' => array_map([$this, 'pluckChannel'], $channelRepository->findAll()),
             'channel_change_support' => $channelChangeSupport,
         ];
     }
 
-    public function getChannel(): ?ChannelInterface
+    public function getChannel(): ?array
     {
         return $this->data['channel'];
     }
@@ -58,30 +58,30 @@ final class ChannelCollector extends DataCollector
         return $this->data['channel_change_support'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function collect(Request $request, Response $response, \Exception $exception = null): void
+    public function collect(Request $request, Response $response, \Throwable $exception = null): void
     {
         try {
-            $this->data['channel'] = $this->channelContext->getChannel();
+            $this->data['channel'] = $this->pluckChannel($this->channelContext->getChannel());
         } catch (ChannelNotFoundException $exception) {
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function reset(): void
     {
         $this->data['channel'] = null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName(): string
     {
         return 'sylius.channel_collector';
+    }
+
+    private function pluckChannel(ChannelInterface $channel): array
+    {
+        return [
+            'name' => $channel->getName(),
+            'hostname' => $channel->getHostname(),
+            'code' => $channel->getCode(),
+        ];
     }
 }

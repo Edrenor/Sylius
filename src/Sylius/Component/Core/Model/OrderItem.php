@@ -15,6 +15,7 @@ namespace Sylius\Component\Core\Model;
 
 use Sylius\Component\Order\Model\OrderItem as BaseOrderItem;
 use Sylius\Component\Order\Model\OrderItemInterface as BaseOrderItemInterface;
+use Webmozart\Assert\Assert;
 
 class OrderItem extends BaseOrderItem implements OrderItemInterface
 {
@@ -27,17 +28,11 @@ class OrderItem extends BaseOrderItem implements OrderItemInterface
     /** @var string */
     protected $variantName;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getVariant(): ?ProductVariantInterface
     {
         return $this->variant;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setVariant(?ProductVariantInterface $variant): void
     {
         $this->variant = $variant;
@@ -48,41 +43,26 @@ class OrderItem extends BaseOrderItem implements OrderItemInterface
         return $this->variant->getProduct();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getProductName(): ?string
     {
         return $this->productName ?: $this->variant->getProduct()->getName();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setProductName(?string $productName): void
     {
         $this->productName = $productName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getVariantName(): ?string
     {
         return $this->variantName ?: $this->variant->getName();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setVariantName(?string $variantName): void
     {
         $this->variantName = $variantName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function equals(BaseOrderItemInterface $item): bool
     {
         return parent::equals($item) || ($item instanceof static && $item->getVariant() === $this->variant);
@@ -90,8 +70,6 @@ class OrderItem extends BaseOrderItem implements OrderItemInterface
 
     /**
      * Returns sum of neutral and non neutral tax adjustments on order item and total tax of units.
-     *
-     * {@inheritdoc}
      */
     public function getTaxTotal(): int
     {
@@ -102,6 +80,9 @@ class OrderItem extends BaseOrderItem implements OrderItemInterface
         }
 
         foreach ($this->units as $unit) {
+            /** @var OrderItemUnitInterface $unit */
+            Assert::isInstanceOf($unit, OrderItemUnitInterface::class);
+
             $taxTotal += $unit->getTaxTotal();
         }
 
@@ -110,8 +91,6 @@ class OrderItem extends BaseOrderItem implements OrderItemInterface
 
     /**
      * Returns single unit price lowered by order unit promotions (each unit must have the same unit promotion discount)
-     *
-     * {@inheritdoc}
      */
     public function getDiscountedUnitPrice(): int
     {
@@ -119,9 +98,14 @@ class OrderItem extends BaseOrderItem implements OrderItemInterface
             return $this->unitPrice;
         }
 
+        $firstUnit = $this->units->first();
+
+        /** @var OrderItemUnitInterface $firstUnit */
+        Assert::isInstanceOf($firstUnit, OrderItemUnitInterface::class);
+
         return
             $this->unitPrice +
-            $this->units->first()->getAdjustmentsTotal(AdjustmentInterface::ORDER_UNIT_PROMOTION_ADJUSTMENT)
+            $firstUnit->getAdjustmentsTotal(AdjustmentInterface::ORDER_UNIT_PROMOTION_ADJUSTMENT)
         ;
     }
 
@@ -131,16 +115,18 @@ class OrderItem extends BaseOrderItem implements OrderItemInterface
             return $this->unitPrice;
         }
 
+        $firstUnit = $this->units->first();
+
+        /** @var OrderItemUnitInterface $firstUnit */
+        Assert::isInstanceOf($firstUnit, OrderItemUnitInterface::class);
+
         return
             $this->unitPrice +
-            $this->units->first()->getAdjustmentsTotal(AdjustmentInterface::ORDER_UNIT_PROMOTION_ADJUSTMENT) +
-            $this->units->first()->getAdjustmentsTotal(AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT)
+            $firstUnit->getAdjustmentsTotal(AdjustmentInterface::ORDER_UNIT_PROMOTION_ADJUSTMENT) +
+            $firstUnit->getAdjustmentsTotal(AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT)
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSubtotal(): int
     {
         return $this->getDiscountedUnitPrice() * $this->quantity;

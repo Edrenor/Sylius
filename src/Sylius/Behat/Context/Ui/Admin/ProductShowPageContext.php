@@ -22,11 +22,12 @@ use Sylius\Behat\Element\Product\ShowPage\MoreDetailsElementInterface;
 use Sylius\Behat\Element\Product\ShowPage\OptionsElementInterface;
 use Sylius\Behat\Element\Product\ShowPage\PricingElementInterface;
 use Sylius\Behat\Element\Product\ShowPage\ShippingElementInterface;
-use Sylius\Behat\Element\Product\ShowPage\TaxonomyElementIterface;
+use Sylius\Behat\Element\Product\ShowPage\TaxonomyElementInterface;
 use Sylius\Behat\Element\Product\ShowPage\VariantsElementInterface;
 use Sylius\Behat\Page\Admin\Product\IndexPageInterface;
 use Sylius\Behat\Page\Admin\Product\ShowPageInterface;
 use Sylius\Component\Core\Model\ProductInterface;
+use Sylius\Component\Core\Model\ProductVariantInterface;
 use Webmozart\Assert\Assert;
 
 final class ProductShowPageContext implements Context
@@ -58,7 +59,7 @@ final class ProductShowPageContext implements Context
     /** @var ShippingElementInterface */
     private $shippingElement;
 
-    /** @var TaxonomyElementIterface */
+    /** @var TaxonomyElementInterface */
     private $taxonomyElement;
 
     /** @var OptionsElementInterface */
@@ -77,7 +78,7 @@ final class ProductShowPageContext implements Context
         MoreDetailsElementInterface $moreDetailsElement,
         PricingElementInterface $pricingElement,
         ShippingElementInterface $shippingElement,
-        TaxonomyElementIterface $taxonomyElement,
+        TaxonomyElementInterface $taxonomyElement,
         OptionsElementInterface $optionsElement,
         VariantsElementInterface $variantsElement
     ) {
@@ -128,6 +129,22 @@ final class ProductShowPageContext implements Context
     }
 
     /**
+     * @When I go to edit page
+     */
+    public function iGoToEditPage(): void
+    {
+        $this->productShowPage->showProductEditPage();
+    }
+
+    /**
+     * @When I go to edit page of :variant variant
+     */
+    public function iGoToEditPageOfVariant(ProductVariantInterface $variant): void
+    {
+        $this->productShowPage->showVariantEditPage($variant);
+    }
+
+    /**
      * @Then I should see this product's product page
      */
     public function iShouldSeeThisProductPage(ProductInterface $product): void
@@ -160,11 +177,27 @@ final class ProductShowPageContext implements Context
     }
 
     /**
+     * @Then I should see product breadcrumb :breadcrumb
+     */
+    public function iShouldSeeBreadcrumb(string $breadcrumb): void
+    {
+        Assert::same($breadcrumb, $this->productShowPage->getBreadcrumb());
+    }
+
+    /**
      * @Then I should see price :price for channel :channelName
      */
     public function iShouldSeePriceForChannel(string $price, string $channelName): void
     {
         Assert::same($this->pricingElement->getPriceForChannel($channelName), $price);
+    }
+
+    /**
+     * @Then I should not see price for channel :channelName
+     */
+    public function iShouldNotSeePriceForChannel(string $channelName): void
+    {
+        Assert::same($this->pricingElement->getPriceForChannel($channelName), '');
     }
 
     /**
@@ -189,6 +222,14 @@ final class ProductShowPageContext implements Context
     public function iShouldSeeProductIsEnabledForChannels(string $channel): void
     {
         Assert::true($this->detailsElement->hasChannel($channel));
+    }
+
+    /**
+     * @Then I should see the product in neither channel
+     */
+    public function iShouldSeeTheProductInNeitherChannel(): void
+    {
+        Assert::same($this->detailsElement->countChannels(), 0);
     }
 
     /**

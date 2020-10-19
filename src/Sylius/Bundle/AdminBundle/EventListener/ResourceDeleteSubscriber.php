@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -38,9 +38,6 @@ final class ResourceDeleteSubscriber implements EventSubscriberInterface
         $this->session = $session;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [
@@ -48,7 +45,7 @@ final class ResourceDeleteSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function onResourceDelete(GetResponseForExceptionEvent $event): void
+    public function onResourceDelete(ExceptionEvent $event): void
     {
         $exception = $event->getException();
         if (!$exception instanceof ForeignKeyConstraintViolationException) {

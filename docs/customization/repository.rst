@@ -32,7 +32,7 @@ For the ``ProductRepository`` run:
 
 .. code-block:: bash
 
-    $ php bin/console debug:container sylius.repository.product
+    php bin/console debug:container sylius.repository.product
 
 As a result you will get the ``Sylius\Bundle\CoreBundle\Doctrine\ORM\ProductRepository`` - this is the class that you need to be extending.
 To make your class more reusable, you should create a new interface ``src/Repository/ProductRepositoryInterface.php``
@@ -93,9 +93,9 @@ As you can see in the ``_sylius.yaml`` you already have a basic configuration, n
         resources:
             product:
                 classes:
-                ...
+                #...
                     repository: App\Repository\ProductRepository
-                ...
+                #...
 
 **3.** After configuring the ``sylius.repository.product`` service has your ``findByOnHand()`` method available.
 You can now use your method in anywhere when you are operating on the Product repository.

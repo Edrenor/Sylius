@@ -32,9 +32,6 @@ final class UniqueSimpleProductCodeValidator extends ConstraintValidator
         $this->productVariantRepository = $productVariantRepository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function validate($value, Constraint $constraint): void
     {
         /** @var UniqueSimpleProductCode $constraint */
@@ -48,7 +45,7 @@ final class UniqueSimpleProductCodeValidator extends ConstraintValidator
             return;
         }
 
-        /** @var ProductVariantInterface $existingProductVariant */
+        /** @var ProductVariantInterface|null $existingProductVariant */
         $existingProductVariant = $this->productVariantRepository->findOneBy(['code' => $value->getCode()]);
 
         if (null !== $existingProductVariant && $existingProductVariant->getProduct()->getId() !== $value->getId()) {

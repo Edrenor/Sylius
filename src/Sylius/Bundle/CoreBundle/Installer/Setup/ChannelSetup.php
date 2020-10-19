@@ -41,12 +41,9 @@ final class ChannelSetup implements ChannelSetupInterface
         $this->channelManager = $channelManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setup(LocaleInterface $locale, CurrencyInterface $currency): void
     {
-        /** @var ChannelInterface $channel */
+        /** @var ChannelInterface|null $channel */
         $channel = $this->channelRepository->findOneBy([]);
 
         if (null === $channel) {

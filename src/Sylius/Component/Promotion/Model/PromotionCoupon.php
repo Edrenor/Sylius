@@ -22,7 +22,7 @@ class PromotionCoupon implements PromotionCouponInterface
     /** @var mixed */
     protected $id;
 
-    /** @var string */
+    /** @var string|null */
     protected $code;
 
     /** @var int|null */
@@ -31,63 +31,42 @@ class PromotionCoupon implements PromotionCouponInterface
     /** @var int */
     protected $used = 0;
 
-    /** @var PromotionInterface */
+    /** @var PromotionInterface|null */
     protected $promotion;
 
-    /** @var \DateTimeInterface */
+    /** @var \DateTimeInterface|null */
     protected $expiresAt;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getId()
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCode(): ?string
     {
         return $this->code;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setCode(?string $code): void
     {
         $this->code = $code;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getUsageLimit(): ?int
     {
         return $this->usageLimit;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setUsageLimit(?int $usageLimit): void
     {
         $this->usageLimit = $usageLimit;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getUsed(): int
     {
         return $this->used;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setUsed(int $used): void
     {
         $this->used = $used;
@@ -103,41 +82,26 @@ class PromotionCoupon implements PromotionCouponInterface
         --$this->used;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPromotion(): ?PromotionInterface
     {
         return $this->promotion;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setPromotion(?PromotionInterface $promotion): void
     {
         $this->promotion = $promotion;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExpiresAt(): ?\DateTimeInterface
     {
         return $this->expiresAt;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setExpiresAt(?\DateTimeInterface $expiresAt = null): void
     {
         $this->expiresAt = $expiresAt;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isValid(): bool
     {
         if (null !== $this->usageLimit && $this->used >= $this->usageLimit) {

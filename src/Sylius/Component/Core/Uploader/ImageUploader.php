@@ -43,18 +43,15 @@ class ImageUploader implements ImageUploaderInterface
         $this->imagePathGenerator = $imagePathGenerator ?? new UploadedImagePathGenerator();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function upload(ImageInterface $image): void
     {
         if (!$image->hasFile()) {
             return;
         }
 
-        /** @var File $file */
         $file = $image->getFile();
 
+        /** @var File $file */
         Assert::isInstanceOf($file, File::class);
 
         if (null !== $image->getPath() && $this->has($image->getPath())) {
@@ -73,9 +70,6 @@ class ImageUploader implements ImageUploaderInterface
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function remove(string $path): bool
     {
         if ($this->filesystem->has($path)) {

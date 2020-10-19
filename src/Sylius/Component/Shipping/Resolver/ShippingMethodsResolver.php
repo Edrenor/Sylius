@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Sylius\Component\Shipping\Resolver;
 
 use Doctrine\Common\Persistence\ObjectRepository;
-use Sylius\Component\Shipping\Checker\ShippingMethodEligibilityCheckerInterface;
+use Sylius\Component\Shipping\Checker\Eligibility\ShippingMethodEligibilityCheckerInterface;
 use Sylius\Component\Shipping\Model\ShippingSubjectInterface;
 
 final class ShippingMethodsResolver implements ShippingMethodsResolverInterface
@@ -33,9 +33,6 @@ final class ShippingMethodsResolver implements ShippingMethodsResolverInterface
         $this->eligibilityChecker = $eligibilityChecker;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSupportedMethods(ShippingSubjectInterface $subject): array
     {
         $methods = [];
@@ -49,9 +46,6 @@ final class ShippingMethodsResolver implements ShippingMethodsResolverInterface
         return $methods;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supports(ShippingSubjectInterface $subject): bool
     {
         return true;

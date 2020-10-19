@@ -33,9 +33,6 @@ final class ChannelBasedLocaleProvider implements LocaleProviderInterface
         $this->defaultLocaleCode = $defaultLocaleCode;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAvailableLocalesCodes(): array
     {
         try {
@@ -45,7 +42,7 @@ final class ChannelBasedLocaleProvider implements LocaleProviderInterface
             return $channel
                 ->getLocales()
                 ->map(function (LocaleInterface $locale) {
-                    return $locale->getCode();
+                    return (string) $locale->getCode();
                 })
                 ->toArray()
             ;
@@ -54,9 +51,6 @@ final class ChannelBasedLocaleProvider implements LocaleProviderInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDefaultLocaleCode(): string
     {
         try {
